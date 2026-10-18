@@ -1,178 +1,265 @@
 /* ============================================================
-   ASMA'S LOVE LETTER — Landing Page Script
-   Rose petals · Countdown · Candle blow detection
+   main.js — Landing page logic
+   YES/NO, running NO button, sarcastic candle blowing
    ============================================================ */
 
-'use strict';
+/* ── State ───────────────────────────────────────────────── */
+let candlesOut   = 0;
+const TOTAL      = 3;
+let isListening  = false;
+let audioCtx, analyser, micStream;
+let sarcasticIdx = 0;
+let noClickCount = 0;
+let weakBlowStreak = 0;
 
-// ── Rose Petals ───────────────────────────────────────────────
-const PETAL_EMOJIS = ['🌸', '🌹', '✿', '❀', '🌺'];
-const petalContainer = document.getElementById('petals-container');
+const sarcasticLines = [
+  ["😐", "bestie... that was barely a breath."],
+  ["💀", "the flame literally grew stronger. iconic."],
+  ["🙄", "okay are you okay? do you need water?"],
+  ["😒", "my grandma's dying breath was louder than that."],
+  ["💁", "BLOW. not breathe. B-L-O-W."],
+  ["😭", "the candles are JUDGING you right now."],
+  ["🎤", "put the mic closer. unless your lungs gave up?"],
+  ["🫠", "scientifically impossible to be this bad at blowing."],
+];
 
-function createPetal(burst = false) {
-  const p = document.createElement('div');
-  p.classList.add('petal');
-  p.textContent = PETAL_EMOJIS[Math.floor(Math.random() * PETAL_EMOJIS.length)];
-  p.style.left            = (Math.random() * 100) + 'vw';
-  p.style.fontSize        = (9 + Math.random() * 10) + 'px';
-  p.style.animationDuration  = (burst ? (3 + Math.random() * 4) : (8 + Math.random() * 10)) + 's';
-  p.style.animationDelay     = burst ? '0s' : '-' + (Math.random() * 12) + 's';
-  p.style.opacity            = 0.4 + Math.random() * 0.4;
-  p.style.filter             = `hue-rotate(${Math.random() * 40}deg)`;
-  petalContainer.appendChild(p);
-  if (burst) {
-    setTimeout(() => p.remove(), 8000);
-  }
-}
+const noTaunts = [
+  "you've tried to escape <b>{n}</b> times 😭",
+  "still trying to click NO? respect the persistence 💀",
+  "girl. just click YES. <b>{n}</b> attempts wasted.",
+  "that NO button is RUNNING for its LIFE ({n} attempts)",
+  "okay at this point it's personal ({n} attempts lmaooo)",
+];
 
-// Seed initial ambient petals
-for (let i = 0; i < 22; i++) createPetal();
-
-// ── Countdown ─────────────────────────────────────────────────
-const NIKKAH_DATE = new Date('2026-10-23T00:00:00+05:00');
-
-function pad(n) { return String(n).padStart(2, '0'); }
-
+/* ── Countdown ───────────────────────────────────────────── */
 function updateCountdown() {
-  const diff = NIKKAH_DATE - Date.now();
+  const target = new Date('2026-10-23T00:00:00');
+  const now    = new Date();
+  const diff   = target - now;
+
   if (diff <= 0) {
-    ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => {
-      document.getElementById(id).textContent = '00';
-    });
-    document.querySelector('.countdown-label').textContent = '✦ today is the day ✦';
+    ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00');
     return;
   }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000)  / 60000);
-  const s = Math.floor((diff % 60000)    / 1000);
-  document.getElementById('cd-days').textContent  = pad(d);
-  document.getElementById('cd-hours').textContent = pad(h);
-  document.getElementById('cd-mins').textContent  = pad(m);
-  document.getElementById('cd-secs').textContent  = pad(s);
+  document.getElementById('cd-days').textContent  = String(Math.floor(diff / 86400000)).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+  document.getElementById('cd-mins').textContent  = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+  document.getElementById('cd-secs').textContent  = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
 }
-updateCountdown();
 setInterval(updateCountdown, 1000);
+updateCountdown();
 
-// ── Candle State ──────────────────────────────────────────────
-let blown       = 0;
-let listening   = false;
-let audioCtx    = null;
-let analyserNode = null;
-let micSource   = null;
-let animFrame   = null;
+/* ── NO Button — runs away ───────────────────────────────── */
+const noBtn      = document.getElementById('no-btn');
+const noCounter  = document.getElementById('no-counter');
+const noCountEl  = document.getElementById('no-count');
 
-function extinguishCandle(n, delay = 0) {
-  setTimeout(() => {
-    const wrap  = document.getElementById('candle-' + n);
-    const smoke = document.getElementById('smoke-' + n);
-    if (!wrap || wrap.classList.contains('out')) return;
+function moveNo() {
+  const margin = 30;
+  const w = noBtn.offsetWidth  || 120;
+  const h = noBtn.offsetHeight || 44;
+  const maxX = window.innerWidth  - w - margin;
+  const maxY = window.innerHeight - h - margin;
+  const x = margin + Math.random() * Math.max(0, maxX - margin);
+  const y = margin + Math.random() * Math.max(0, maxY - margin);
 
-    // Trigger smoke puff
-    smoke.classList.add('puff');
-    // Brief flicker then go out
-    setTimeout(() => {
-      wrap.classList.add('out');
-      blown++;
-      if (blown >= 3) onAllOut();
-    }, 250);
-  }, delay);
+  noBtn.style.left = x + 'px';
+  noBtn.style.top  = y + 'px';
+  noBtn.style.transform = `rotate(${(Math.random() * 30 - 15).toFixed(1)}deg)`;
+
+  noClickCount++;
+  noCountEl.textContent = noClickCount;
+  noCounter.classList.add('show');
+
+  const taunt = noTaunts[Math.min(noClickCount - 1, noTaunts.length - 1)];
+  noCounter.innerHTML = taunt.replace('{n}', `<b>${noClickCount}</b>`);
+
+  if (noClickCount >= 10) {
+    showSarcasm("🫡", "okay FINE. you win. loading it anyway.");
+    setTimeout(() => handleYes(), 2000);
+  }
 }
 
-function onAllOut() {
-  // Stop mic
-  listening = false;
-  if (animFrame)   cancelAnimationFrame(animFrame);
-  if (micSource)   micSource.disconnect();
-  if (audioCtx)    audioCtx.close();
+noBtn.addEventListener('mouseenter', moveNo);
+noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); }, { passive: false });
+noBtn.addEventListener('click', () => {
+  showSarcasm("🤯", "HOW. HOW DID YOU CLICK THAT.");
+  setTimeout(() => handleYes(), 2000);
+});
 
-  // Burst of petals!
-  for (let i = 0; i < 40; i++) {
-    setTimeout(() => createPetal(true), Math.random() * 1200);
+/* ── YES button ──────────────────────────────────────────── */
+function handleYes() {
+  burstConfetti();
+  showSarcasm("🎉", "okay GREAT, finally. the candles have been waiting.");
+
+  const yesSection    = document.getElementById('section-yesno');
+  const candleSection = document.getElementById('section-candles');
+
+  setTimeout(() => {
+    yesSection.classList.add('hidden');
+    candleSection.classList.remove('hidden');
+  }, 800);
+}
+
+/* ── Confetti burst ──────────────────────────────────────── */
+const CONFETTI_COLORS = ['#ffb3d4','#a8f0d8','#ffe699','#d4b8ff','#ffcba8','#a0d9ff','#b8f5c0','#ff9fb0'];
+
+function burstConfetti() {
+  const container = document.getElementById('confetti-container');
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 6 + Math.random() * 10;
+    piece.style.cssText = `
+      left: ${10 + Math.random() * 80}%;
+      width: ${size}px; height: ${size}px;
+      background: ${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]};
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      animation-duration: ${1.5 + Math.random() * 2}s;
+      animation-delay: ${Math.random() * 0.5}s;
+    `;
+    container.appendChild(piece);
+    setTimeout(() => piece.remove(), 4000);
+  }
+}
+
+/* ── Sarcasm bubble ──────────────────────────────────────── */
+let sarcasmTimer = null;
+function showSarcasm(emoji, text) {
+  const bubble = document.getElementById('sarcasm-bubble');
+  bubble.textContent = `${emoji} ${text}`;
+  bubble.classList.add('show');
+  clearTimeout(sarcasmTimer);
+  sarcasmTimer = setTimeout(() => bubble.classList.remove('show'), 3200);
+}
+
+/* ── Candle click fallback ───────────────────────────────── */
+document.querySelectorAll('.candle-wrap').forEach(candle => {
+  candle.addEventListener('click', () => blowOutCandle(candle.id.split('-')[1]));
+  candle.style.cursor = 'pointer';
+  candle.title = 'click to blow out!';
+});
+
+/* ── Blow out a candle ───────────────────────────────────── */
+function blowOutCandle(id) {
+  const candle = document.getElementById(`candle-${id}`);
+  if (!candle || candle.classList.contains('out')) return;
+
+  const smoke = document.getElementById(`smoke-${id}`);
+  if (smoke) {
+    smoke.classList.add('puff');
+    setTimeout(() => smoke.classList.remove('puff'), 2100);
   }
 
-  // Show success overlay
-  const overlay = document.getElementById('success-overlay');
-  setTimeout(() => {
-    overlay.classList.add('visible');
-    // Navigate after a beat
-    setTimeout(() => {
-      document.getElementById('page-veil').classList.add('cover');
-      setTimeout(() => { window.location.href = 'journey.html'; }, 1300);
-    }, 2200);
-  }, 500);
+  candle.classList.add('out');
+  candlesOut++;
+
+  if (candlesOut === TOTAL) {
+    stopListening();
+    setTimeout(successTransition, 1200);
+  }
 }
 
-// ── Mic / Blow Detection ──────────────────────────────────────
+/* ── Success → journey.html ──────────────────────────────── */
+function successTransition() {
+  burstConfetti();
+  burstConfetti();
+  const overlay = document.getElementById('success-overlay');
+  overlay.classList.add('visible');
+  overlay.querySelector('h2').textContent = "okay bestie, now scroll through your story 🎀";
+  overlay.querySelector('p').textContent  = "taking you there...";
+
+  setTimeout(() => {
+    const veil = document.getElementById('page-veil');
+    veil.classList.add('cover');
+    setTimeout(() => window.location.href = 'journey.html', 900);
+  }, 1800);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MICROPHONE — blow detection
+══════════════════════════════════════════════════════════ */
 async function startListening() {
-  if (listening || blown >= 3) return;
+  if (isListening) { stopListening(); return; }
+
   const btn  = document.getElementById('mic-btn');
   const hint = document.getElementById('mic-hint');
-  const txt  = document.getElementById('mic-btn-text');
 
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(micStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    analyser.smoothingTimeConstant = 0.6;
+    source.connect(analyser);
 
-    audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
-    analyserNode = audioCtx.createAnalyser();
-    analyserNode.fftSize = 256;
-    micSource   = audioCtx.createMediaStreamSource(stream);
-    micSource.connect(analyserNode);
-
-    listening = true;
+    isListening = true;
     btn.classList.add('listening');
+    document.getElementById('mic-btn-text').textContent = 'listening... 🎙️';
+    hint.textContent = 'now BLOW towards your screen!';
+    detectBlow();
+
+  } catch (err) {
+    console.warn('Mic denied:', err);
+    hint.textContent = 'mic unavailable — click the candles instead! 🕯️';
     btn.disabled = true;
-    txt.textContent = 'now blow! 🎤';
-    hint.textContent = 'take a deep breath and blow towards your screen...';
-
-    const data = new Uint8Array(analyserNode.frequencyBinCount);
-    let cooldown = false;
-    let highFrames = 0; // require sustained volume
-
-    function detect() {
-      if (!listening) return;
-      analyserNode.getByteFrequencyData(data);
-      const avg = data.reduce((s, v) => s + v, 0) / data.length;
-
-      if (avg > 28 && !cooldown) {
-        highFrames++;
-        if (highFrames > 3) { // sustained blow (≈ 3 frames @ ~60fps)
-          cooldown = true;
-          highFrames = 0;
-
-          const remaining = [1, 2, 3].filter(n => {
-            const el = document.getElementById('candle-' + n);
-            return el && !el.classList.contains('out');
-          });
-          remaining.forEach((num, i) => extinguishCandle(num, i * 420));
-
-          setTimeout(() => { cooldown = false; }, 2500);
-        }
-      } else {
-        highFrames = 0;
-      }
-
-      animFrame = requestAnimationFrame(detect);
-    }
-    detect();
-
-  } catch (_err) {
-    // Mic denied — offer manual click fallback
-    hint.textContent = '🚫 mic unavailable — click each candle to blow it out!';
-    btn.textContent = '💨 click to blow';
-    btn.disabled = false;
-    btn.classList.remove('listening');
-    btn.onclick = () => {
-      if (blown < 3) extinguishCandle(blown + 1);
-    };
-
-    // Also make candles themselves clickable
-    [1,2,3].forEach(n => {
-      const el = document.getElementById('candle-' + n);
-      if (el) el.style.cursor = 'pointer';
-      el?.addEventListener('click', () => {
-        if (!el.classList.contains('out')) extinguishCandle(n);
-      });
-    });
+    showSarcasm("😶", "mic denied. click the candles like a normal person.");
   }
+}
+
+function stopListening() {
+  isListening = false;
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  if (audioCtx && audioCtx.state !== 'closed') { audioCtx.close(); audioCtx = null; }
+  const btn = document.getElementById('mic-btn');
+  btn.classList.remove('listening');
+  document.getElementById('mic-btn-text').textContent = 'tap & blow 💨';
+}
+
+function detectBlow() {
+  if (!isListening) return;
+
+  const buffer = new Uint8Array(analyser.fftSize);
+  analyser.getByteFrequencyData(buffer);
+
+  // Average low-frequency energy — breath is mostly 100–800 Hz
+  const lowBand = buffer.slice(0, 80);
+  const avg = lowBand.reduce((a, b) => a + b, 0) / lowBand.length;
+
+  if (avg > 32) {
+    // Strong blow
+    weakBlowStreak = 0;
+    const next = getNextLitCandle();
+    if (next) {
+      blowOutCandle(next);
+      if (candlesOut < TOTAL) showSarcasm("💨", "one down! keep going!");
+    }
+  } else if (avg > 14) {
+    // Medium — almost
+    weakBlowStreak++;
+    if (weakBlowStreak === 3) {
+      showSarcasm("😮‍💨", "getting there... a little harder!");
+      weakBlowStreak = 0;
+    }
+  } else if (avg > 5) {
+    // Too weak
+    weakBlowStreak++;
+    if (weakBlowStreak >= 5) {
+      const [emoji, msg] = sarcasticLines[sarcasticIdx % sarcasticLines.length];
+      showSarcasm(emoji, msg);
+      sarcasticIdx++;
+      weakBlowStreak = 0;
+    }
+  }
+
+  if (candlesOut < TOTAL && isListening) requestAnimationFrame(detectBlow);
+}
+
+function getNextLitCandle() {
+  for (let i = 1; i <= 3; i++) {
+    const c = document.getElementById(`candle-${i}`);
+    if (c && !c.classList.contains('out')) return String(i);
+  }
+  return null;
 }

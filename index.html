@@ -3,538 +3,370 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Letter for Asma 💌</title>
-  <meta name="description" content="A visual love letter written by fate, for Asma — on the eve of October 23rd." />
+  <title>psst, Asma 🎀</title>
+  <meta name="description" content="i made something for you. do you wanna see it?" />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* ── Landing page layout ─────────────────────────────── */
-    .landing {
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-      position: relative;
-      gap: 0.6rem;
+    /* ── SECTION WRAPPER ─────────────────────────── */
+    .section {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .section.hidden {
+      opacity: 0; pointer-events: none;
+      transform: translateY(-30px);
     }
 
-    /* Ambient warm radial background glow */
-    .landing::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 70% 50% at 50% 75%, rgba(201,120,40,0.07) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 30% at 30% 20%, rgba(201,168,76,0.04) 0%, transparent 60%);
-      pointer-events: none;
+    /* ══════════════════════════════════════════════
+       SECTION 1 — YES / NO
+    ══════════════════════════════════════════════ */
+    #section-yesno { z-index: 10; }
+
+    /* Stars scattered around */
+    .star-deco {
+      position: fixed; font-size: 1.2rem; pointer-events: none; z-index: 1;
+      animation: star-float 4s ease-in-out infinite alternate;
+    }
+    @keyframes star-float {
+      from { transform: translateY(0) rotate(0deg); }
+      to   { transform: translateY(-12px) rotate(15deg); }
     }
 
-    /* ── Typography ──────────────────────────────────────── */
-    .letter-from {
-      font-family: var(--ff-script);
-      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
-      color: var(--rose);
-      letter-spacing: 0.08em;
-      opacity: 0.8;
+    /* character / mascot */
+    .mascot {
+      font-size: clamp(4rem, 14vw, 7rem);
+      animation: mascot-bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 6px 12px rgba(255,179,212,0.4));
+      margin-bottom: 0.5rem;
+    }
+    @keyframes mascot-bounce {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50%       { transform: translateY(-12px) rotate(4deg); }
+    }
+
+    .greeting-title {
+      font-family: var(--ff-fun);
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      color: var(--dark);
       text-align: center;
-      animation: fade-up 1.4s ease both;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+      position: relative; z-index: 2;
     }
 
-    .letter-title {
+    .greeting-sub {
+      font-family: var(--ff-hand);
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: var(--muted);
       text-align: center;
-      line-height: 1;
-      animation: fade-up 1.4s 0.25s ease both;
+      margin-bottom: 2rem;
+      position: relative; z-index: 2;
     }
 
-    .title-name {
-      display: block;
-      font-family: var(--ff-script);
-      font-size: clamp(5rem, 16vw, 10rem);
-      color: var(--gold-light);
-      filter: drop-shadow(0 0 30px rgba(201, 168, 76, 0.35));
-      line-height: 0.95;
+    .btn-row {
+      display: flex; gap: 1.5rem; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
     }
 
-    /* ── Countdown ───────────────────────────────────────── */
-    .countdown-wrap {
-      text-align: center;
-      animation: fade-up 1.4s 0.5s ease both;
+    /* YES button */
+    #yes-btn {
+      background: var(--mint);
+      color: var(--dark);
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      padding: 1rem 2.8rem;
+      box-shadow: 0 6px 0 rgba(100,200,160,0.4);
+      animation: yes-wiggle 3s ease-in-out infinite;
+    }
+    #yes-btn:hover {
+      background: #8fe8c4;
+      box-shadow: 0 8px 0 rgba(100,200,160,0.4);
+    }
+    @keyframes yes-wiggle {
+      0%, 90%, 100% { transform: rotate(0deg); }
+      93%  { transform: rotate(-4deg); }
+      96%  { transform: rotate(4deg); }
     }
 
-    .countdown-label {
-      font-family: var(--ff-serif);
-      font-style: italic;
-      font-size: 0.82rem;
-      color: var(--rose);
-      opacity: 0.65;
-      letter-spacing: 0.2em;
-      margin-bottom: 0.55rem;
+    /* NO button — runs away! */
+    #no-btn {
+      background: var(--peach);
+      color: var(--muted);
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      padding: 0.7rem 1.8rem;
+      box-shadow: 0 4px 0 rgba(200,140,100,0.3);
+      position: fixed; /* fixed so it can escape anywhere */
+      transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  top  0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .countdown-timer {
-      display: flex;
-      gap: 0.8rem;
-      align-items: center;
-      justify-content: center;
+    /* Try counter */
+    #no-counter {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
+      opacity: 0; transition: opacity 0.3s ease; z-index: 100;
+    }
+    #no-counter.show { opacity: 1; }
+
+    /* ══════════════════════════════════════════════
+       SECTION 2 — CANDLES
+    ══════════════════════════════════════════════ */
+    #section-candles { z-index: 9; background: var(--white); }
+
+    .candle-page-title {
+      font-family: var(--ff-fun);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      color: var(--dark); text-align: center;
+      margin-bottom: 0.4rem;
     }
 
-    .cd-unit { text-align: center; }
-
-    .cd-num {
-      display: block;
-      font-family: var(--ff-serif);
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      color: var(--gold);
-      line-height: 1;
-      min-width: 2.4ch;
-    }
-
-    .cd-label {
-      font-size: 0.55rem;
-      color: var(--text-dim);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-    }
-
-    .cd-sep {
-      font-family: var(--ff-serif);
-      font-size: 1.8rem;
-      color: var(--gold-dim);
-      margin-top: -6px;
-    }
-
-    /* ── Candles ─────────────────────────────────────────── */
-    .candles-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.6rem;
-      animation: fade-up 1.4s 0.75s ease both;
-    }
-
-    .candle-instruction {
-      font-family: var(--ff-serif);
-      font-style: italic;
+    .candle-page-sub {
+      font-family: var(--ff-hand);
       font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: var(--cream);
-      opacity: 0.8;
-      text-align: center;
-      line-height: 1.9;
+      color: var(--muted); text-align: center;
+      margin-bottom: 2.5rem;
     }
 
-    .candle-sub {
-      font-family: var(--ff-script);
-      font-size: clamp(0.82rem, 1.8vw, 0.95rem);
-      color: var(--rose);
-      opacity: 0.7;
+    /* Countdown */
+    .countdown-wrap { text-align: center; margin-bottom: 1.5rem; }
+    .cd-label {
+      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
+      letter-spacing: 0.15em; margin-bottom: 0.4rem;
     }
+    .cd-timer {
+      display: flex; gap: 0.7rem; align-items: center; justify-content: center;
+    }
+    .cd-unit { text-align: center; }
+    .cd-num {
+      display: block; font-family: var(--ff-fun);
+      font-size: clamp(1.6rem, 4.5vw, 2.5rem); color: var(--coral); line-height: 1;
+    }
+    .cd-lbl {
+      font-size: 0.55rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.2em;
+    }
+    .cd-sep { font-family: var(--ff-fun); font-size: 1.5rem; color: var(--pink); margin-top: -4px; }
 
+    /* Candle row */
     .candles-row {
-      display: flex;
-      gap: clamp(1.5rem, 5vw, 3.5rem);
-      align-items: flex-end;
-      position: relative;
+      display: flex; gap: clamp(1.8rem, 5vw, 3.5rem); align-items: flex-end;
+      position: relative; margin: 0 auto 2rem;
     }
 
-    /* Warm ambient glow from candle group */
-    .candles-row::before {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      height: 180px;
-      background: radial-gradient(ellipse at 50% 80%, rgba(255,150,40,0.11) 0%, transparent 70%);
-      pointer-events: none;
-      animation: glow-pulse 2s ease-in-out infinite alternate;
+    /* Candle sizes & colors */
+    .c1-body { height: 65px; background: linear-gradient(to right, #ffb3d4, #ff8fb8, #ffc4d8); }
+    .c1-holder { background: var(--pink); box-shadow: 0 3px 0 rgba(200,100,130,0.35); }
+    .c1-drip { background: rgba(255,180,210,0.7); right: -3px; top: 8px; }
+
+    .c2-body { height: 88px; background: linear-gradient(to right, #ffe699, #ffd060, #ffe8a8); }
+    .c2-holder { background: var(--yellow); box-shadow: 0 3px 0 rgba(200,170,60,0.35); }
+    .c2-drip { background: rgba(255,230,130,0.7); left: -3px; top: 12px; }
+
+    .c3-body { height: 72px; background: linear-gradient(to right, #d4b8ff, #b890ff, #e0caff); }
+    .c3-holder { background: var(--lavender); box-shadow: 0 3px 0 rgba(140,100,220,0.35); }
+
+    /* Mic button */
+    .mic-section { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+
+    #mic-btn {
+      background: var(--sky); color: var(--dark); font-family: var(--ff-body);
+      font-weight: 800; font-size: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border: none; border-radius: 50px; cursor: pointer;
+      box-shadow: 0 5px 0 rgba(100,180,240,0.4);
+      transition: all 0.2s ease;
     }
-
-    @keyframes glow-pulse {
-      from { opacity: 0.6; transform: translateX(-50%) scale(1); }
-      to   { opacity: 1;   transform: translateX(-50%) scale(1.12); }
+    #mic-btn:hover { background: #7cceff; transform: translateY(-2px); box-shadow: 0 7px 0 rgba(100,180,240,0.4); }
+    #mic-btn.listening {
+      background: var(--coral); color: #fff;
+      animation: mic-pulse 1.2s ease-in-out infinite;
     }
-
-    /* ── Single Candle ───────────────────────────────────── */
-    .candle-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      transition: filter 0.6s ease, opacity 0.6s ease;
-      cursor: default;
-    }
-
-    .candle-wrap.out { filter: brightness(0.25) saturate(0); }
-
-    /* Flame container */
-    .flame-container {
-      position: relative;
-      width: 20px;
-      height: 44px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .candle-wrap.out .flame-container { opacity: 0; }
-
-    .flame {
-      position: absolute;
-      bottom: 2px;
-      width: 13px;
-      height: 28px;
-      background: linear-gradient(to top, #ff5500 0%, #ff9500 40%, #ffdd55 80%, #fffde7 100%);
-      border-radius: 50% 50% 30% 30% / 60% 60% 30% 30%;
-      transform-origin: bottom center;
-      animation: flame-dance 0.35s ease-in-out infinite alternate;
-      filter: blur(0.4px);
-    }
-
-    .flame-halo {
-      position: absolute;
-      bottom: 0;
-      width: 22px;
-      height: 22px;
-      background: radial-gradient(circle, rgba(255,160,50,0.55), transparent 70%);
-      border-radius: 50%;
-      animation: halo-pulse 0.4s ease-in-out infinite alternate;
-    }
-
-    @keyframes flame-dance {
-      0%   { transform: scaleX(1)    scaleY(1)    rotate(-3deg); }
-      33%  { transform: scaleX(0.9)  scaleY(1.08) rotate(4deg); }
-      66%  { transform: scaleX(1.08) scaleY(0.94) rotate(-1deg); }
-      100% { transform: scaleX(0.95) scaleY(1.05) rotate(3deg); }
-    }
-
-    @keyframes halo-pulse {
-      from { opacity: 0.5; transform: scale(1); }
-      to   { opacity: 1;   transform: scale(1.25); }
-    }
-
-    /* Smoke puff */
-    .smoke-puff {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(200,200,210,0.7);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .smoke-puff.puff {
-      animation: smoke-up 2.5s ease-out forwards;
-    }
-
-    @keyframes smoke-up {
-      0%   { opacity: 0.8; transform: translateX(-50%) translateY(0) scaleX(1); }
-      25%  { opacity: 0.5; transform: translateX(-50%) translateY(-20px) scaleX(2.5); }
-      60%  { opacity: 0.3; transform: translateX(-45%) translateY(-45px) scaleX(5); }
-      100% { opacity: 0;   transform: translateX(-40%) translateY(-80px) scaleX(8); }
-    }
-
-    /* Candle body */
-    .candle-body {
-      position: relative;
-      width: 13px;
-      border-radius: 2px 2px 0 0;
-      background: linear-gradient(to right,
-        rgba(250,240,225,1) 0%,
-        rgba(245,232,212,0.92) 50%,
-        rgba(225,210,188,0.85) 100%);
-      box-shadow: inset 2px 0 4px rgba(0,0,0,0.08);
-    }
-
-    .candle-body::before { /* highlight */
-      content: '';
-      position: absolute;
-      top: 6px; left: 2px;
-      width: 3px; height: 18px;
-      background: rgba(255,255,255,0.45);
-      border-radius: 2px;
-    }
-
-    .wick {
-      position: absolute;
-      top: -7px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 2px;
-      height: 9px;
-      background: #2a2018;
-      border-radius: 1px;
-    }
-
-    .wax-drip {
-      position: absolute;
-      width: 9px;
-      height: 22px;
-      background: rgba(250,238,218,0.75);
-      border-radius: 0 0 60% 60%;
-    }
-
-    /* Candle holder */
-    .candle-holder {
-      width: 26px;
-      height: 8px;
-      background: linear-gradient(to bottom, var(--gold-light), var(--gold));
-      border-radius: 3px 3px 2px 2px;
-      box-shadow: 0 2px 10px rgba(201,168,76,0.35);
-    }
-
-    /* ── Mic Button ──────────────────────────────────────── */
-    .mic-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.65rem;
-      animation: fade-up 1.4s 1s ease both;
-    }
-
-    .mic-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      padding: 0.75rem 2.2rem;
-      background: transparent;
-      border: 1px solid var(--gold);
-      border-radius: 50px;
-      color: var(--gold);
-      font-family: var(--ff-serif);
-      font-size: 1rem;
-      letter-spacing: 0.2em;
-      font-style: italic;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: color 0.4s ease, border-color 0.4s ease;
-    }
-
-    .mic-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--gold);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s var(--ease-out);
-      z-index: 0;
-    }
-
-    .mic-btn span, .mic-btn svg { position: relative; z-index: 1; }
-
-    .mic-btn:hover { color: var(--plum-dark); border-color: var(--gold); }
-    .mic-btn:hover::before { transform: scaleX(1); }
-
-    .mic-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .mic-btn:disabled::before { display: none; }
-
-    .mic-btn.listening {
-      border-color: var(--rose);
-      color: var(--rose);
-      animation: mic-pulse 1.5s ease-in-out infinite;
-    }
-
     @keyframes mic-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(232,180,184,0.4); }
-      50%       { box-shadow: 0 0 0 12px rgba(232,180,184,0); }
+      0%, 100% { box-shadow: 0 5px 0 rgba(255,100,130,0.4), 0 0 0 0 rgba(255,100,130,0.3); }
+      50%       { box-shadow: 0 5px 0 rgba(255,100,130,0.4), 0 0 0 15px rgba(255,100,130,0); }
     }
+    #mic-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
     .mic-hint {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      letter-spacing: 0.08em;
-      font-style: italic;
-      text-align: center;
-      max-width: 280px;
+      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
+      text-align: center; max-width: 280px;
     }
 
-    /* ── Success overlay ─────────────────────────────────── */
+    /* Success overlay after blow */
     #success-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--plum-dark);
-      z-index: 9997;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1.2s ease;
+      position: fixed; inset: 0; z-index: 9997;
+      background: var(--white);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.8rem; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity 1s ease;
     }
-
-    #success-overlay.visible {
-      opacity: 1;
-      pointer-events: all;
-    }
-
+    #success-overlay.visible { opacity: 1; pointer-events: all; }
     #success-overlay h2 {
-      font-family: var(--ff-script);
-      font-size: clamp(2rem, 7vw, 4.5rem);
-      color: var(--gold-light);
-      text-align: center;
-      filter: drop-shadow(0 0 30px rgba(232,201,122,0.4));
-      animation: fade-up 1s ease both;
+      font-family: var(--ff-fun);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: var(--coral);
     }
+    #success-overlay p { font-family: var(--ff-hand); font-size: 1.2rem; color: var(--muted); }
 
-    #success-overlay p {
-      font-family: var(--ff-serif);
-      font-style: italic;
-      color: var(--rose);
-      opacity: 0.75;
-      letter-spacing: 0.2em;
-      font-size: 0.88rem;
-      animation: fade-up 1s 0.3s ease both;
+    /* Sarcasm bubble */
+    #sarcasm-bubble {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: var(--dark); color: #fff;
+      font-family: var(--ff-hand); font-size: 1.15rem;
+      padding: 0.75rem 1.8rem; border-radius: 50px;
+      white-space: nowrap; z-index: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      max-width: 90vw; text-align: center;
     }
+    #sarcasm-bubble.show { opacity: 1; }
   </style>
 </head>
 
 <body>
-  <!-- Petals -->
-  <div id="petals-container"></div>
-
-  <!-- Page veil for smooth transitions -->
+  <!-- Page veil for transitions -->
   <div id="page-veil"></div>
 
-  <!-- Success screen (shown after candles blown) -->
+  <!-- Confetti container -->
+  <div id="confetti-container" style="position:fixed;inset:0;pointer-events:none;z-index:200;"></div>
+
+  <!-- ── Floating star decorations ───────────────────────────── -->
+  <span class="star-deco" style="top:8%; left:6%; font-size:1.5rem; color:var(--pink); animation-delay:0s;">★</span>
+  <span class="star-deco" style="top:15%; right:8%; font-size:1rem; color:var(--mint); animation-delay:0.5s;">✦</span>
+  <span class="star-deco" style="top:70%; left:5%; font-size:1.3rem; color:var(--lavender); animation-delay:1s;">✶</span>
+  <span class="star-deco" style="top:80%; right:6%; font-size:0.9rem; color:var(--yellow); animation-delay:1.5s;">★</span>
+  <span class="star-deco" style="top:40%; left:3%; font-size:0.8rem; color:var(--peach); animation-delay:0.8s;">✦</span>
+  <span class="star-deco" style="top:55%; right:4%; font-size:1.2rem; color:var(--sky); animation-delay:0.3s;">✶</span>
+  <span class="star-deco" style="top:25%; left:15%; font-size:0.7rem; color:var(--coral); animation-delay:1.2s;">★</span>
+  <span class="star-deco" style="top:88%; left:40%; font-size:1rem; color:var(--mint); animation-delay:0.6s;">✦</span>
+
+  <!-- Sarcasm bubble (shared) -->
+  <div id="sarcasm-bubble"></div>
+
+  <!-- Success overlay -->
   <div id="success-overlay">
-    <h2>your story awaits...</h2>
-    <p>✦ &nbsp; stepping into the light &nbsp; ✦</p>
+    <div style="font-size:4rem;">🎉</div>
+    <h2>okay, now we're talking!</h2>
+    <p>loading your story...</p>
   </div>
 
-  <!-- ── Main Landing ─────────────────────────────────────── -->
-  <main class="landing" id="landing-main">
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 1 — "do you wanna see it?"
+  ══════════════════════════════════════════════════════════ -->
+  <section id="section-yesno" class="section">
+    <div class="mascot">🎀</div>
 
-    <!-- Top ornament -->
-    <div class="ornament" style="animation: fade-up 1.4s ease both;">
-      ✦ &nbsp; fate has written you a letter &nbsp; ✦
+    <h1 class="greeting-title">
+      i made something for you
+    </h1>
+    <p class="greeting-sub">do you wanna see it? 👀</p>
+
+    <div class="btn-row">
+      <button class="bubble-btn" id="yes-btn" onclick="handleYes()">
+        YES 🎉
+      </button>
     </div>
 
-    <!-- Title -->
-    <header style="text-align:center;">
-      <span class="letter-from">for</span>
-      <h1 class="letter-title">
-        <span class="title-name">Asma</span>
-      </h1>
-    </header>
+    <button class="bubble-btn" id="no-btn" style="left:60%; top:55%;">
+      no thanks 😬
+    </button>
+
+    <!-- No-click counter -->
+    <div id="no-counter">you've tried to escape <span id="no-count">0</span> times 💀</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SECTION 2 — Candle blowing
+  ══════════════════════════════════════════════════════════ -->
+  <section id="section-candles" class="section hidden">
 
     <!-- Countdown -->
     <div class="countdown-wrap">
-      <p class="countdown-label">✦ &nbsp; until forever begins &nbsp; ✦</p>
-      <div class="countdown-timer">
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-days">05</span>
-          <span class="cd-label">days</span>
-        </div>
+      <p class="cd-label">⏳ until october 23rd</p>
+      <div class="cd-timer">
+        <div class="cd-unit"><span class="cd-num" id="cd-days">05</span><span class="cd-lbl">days</span></div>
         <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-hours">00</span>
-          <span class="cd-label">hours</span>
-        </div>
+        <div class="cd-unit"><span class="cd-num" id="cd-hours">00</span><span class="cd-lbl">hrs</span></div>
         <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-mins">00</span>
-          <span class="cd-label">mins</span>
-        </div>
+        <div class="cd-unit"><span class="cd-num" id="cd-mins">00</span><span class="cd-lbl">min</span></div>
         <span class="cd-sep">:</span>
-        <div class="cd-unit">
-          <span class="cd-num" id="cd-secs">00</span>
-          <span class="cd-label">secs</span>
-        </div>
+        <div class="cd-unit"><span class="cd-num" id="cd-secs">00</span><span class="cd-lbl">sec</span></div>
       </div>
     </div>
 
-    <!-- ── Candles ─────────────────────────────────────────── -->
-    <div class="candles-section">
-      <p class="candle-instruction">
-        blow out the candles<br>
-        <span class="candle-sub">and let your story unfold...</span>
-      </p>
+    <h2 class="candle-page-title">okay now blow the candles 🕯️</h2>
+    <p class="candle-page-sub">use your mic, or click each candle if mic is unavailable</p>
 
-      <div class="candles-row" id="candles-row">
+    <!-- Candles -->
+    <div class="candles-row" id="candles-row">
 
-        <!-- Candle 1 (short) -->
-        <div class="candle-wrap" id="candle-1">
-          <div class="flame-container">
-            <div class="flame-halo"></div>
-            <div class="flame"></div>
-            <div class="smoke-puff" id="smoke-1"></div>
-          </div>
-          <div class="candle-body" style="height:60px;">
-            <div class="wick"></div>
-            <div class="wax-drip" style="right:-3px; top:8px;"></div>
-          </div>
-          <div class="candle-holder"></div>
+      <!-- Candle 1 — pink -->
+      <div class="candle-wrap" id="candle-1">
+        <div class="flame-container">
+          <div class="flame-halo halo-1"></div>
+          <div class="flame flame-1"></div>
+          <div class="smoke-puff" id="smoke-1"></div>
         </div>
-
-        <!-- Candle 2 (tall, centre) -->
-        <div class="candle-wrap" id="candle-2" style="transform:scale(1.18); transform-origin:bottom center;">
-          <div class="flame-container">
-            <div class="flame-halo"></div>
-            <div class="flame"></div>
-            <div class="smoke-puff" id="smoke-2"></div>
-          </div>
-          <div class="candle-body" style="height:85px;">
-            <div class="wick"></div>
-            <div class="wax-drip" style="left:-3px; top:12px;"></div>
-          </div>
-          <div class="candle-holder"></div>
+        <div class="candle-body c1-body">
+          <div class="wick"></div>
+          <div class="wax-drip c1-drip"></div>
         </div>
-
-        <!-- Candle 3 (medium) -->
-        <div class="candle-wrap" id="candle-3">
-          <div class="flame-container">
-            <div class="flame-halo"></div>
-            <div class="flame"></div>
-            <div class="smoke-puff" id="smoke-3"></div>
-          </div>
-          <div class="candle-body" style="height:70px;">
-            <div class="wick"></div>
-            <div class="wax-drip" style="right:-2px; top:6px;"></div>
-          </div>
-          <div class="candle-holder"></div>
-        </div>
-
+        <div class="candle-holder c1-holder"></div>
       </div>
 
-      <!-- Mic button -->
-      <div class="mic-section">
-        <button class="mic-btn" id="mic-btn" onclick="startListening()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2z"/>
-          </svg>
-          <span id="mic-btn-text">hold &amp; blow</span>
-        </button>
-        <p class="mic-hint" id="mic-hint">
-          tap the button, then blow gently towards your screen 🕯️
-        </p>
+      <!-- Candle 2 — yellow (tallest) -->
+      <div class="candle-wrap" id="candle-2" style="transform:scale(1.15);transform-origin:bottom;">
+        <div class="flame-container">
+          <div class="flame-halo halo-2"></div>
+          <div class="flame flame-2"></div>
+          <div class="smoke-puff" id="smoke-2"></div>
+        </div>
+        <div class="candle-body c2-body">
+          <div class="wick"></div>
+          <div class="wax-drip c2-drip"></div>
+        </div>
+        <div class="candle-holder c2-holder"></div>
       </div>
+
+      <!-- Candle 3 — lavender -->
+      <div class="candle-wrap" id="candle-3">
+        <div class="flame-container">
+          <div class="flame-halo halo-3"></div>
+          <div class="flame flame-3"></div>
+          <div class="smoke-puff" id="smoke-3"></div>
+        </div>
+        <div class="candle-body c3-body">
+          <div class="wick"></div>
+        </div>
+        <div class="candle-holder c3-holder"></div>
+      </div>
+
     </div>
 
-    <!-- Bottom ornament -->
-    <div class="ornament" style="animation: fade-up 1.4s 1.2s ease both;">
-      ✦ &nbsp; october 23rd &nbsp; ✦
+    <!-- Mic button -->
+    <div class="mic-section">
+      <button id="mic-btn" onclick="startListening()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2z"/>
+        </svg>
+        <span id="mic-btn-text">tap & blow 💨</span>
+      </button>
+      <p class="mic-hint" id="mic-hint">tap the button first, then blow towards your screen</p>
     </div>
 
-  </main>
+  </section>
 
-  <!-- Hidden easter egg credit -->
-  <div class="creator-credit" title="a little secret 🌸">made with 💕 by tehrim</div>
+  <!-- Creator credit easter egg -->
+  <div class="creator-credit" title="hehe">made with 🩷 by tehrim</div>
 
   <script src="main.js"></script>
 </body>
