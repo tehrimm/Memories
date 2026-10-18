@@ -3,398 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asma's Story 🐝</title>
+  <title>Asma's Story</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* ── Page base ───────────────────────────────────────── */
-    html, body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
-      background: #fffdf6;
-    }
-
-    /* ── Chapter start screen ────────────────────────────── */
-    #music-prompt {
-      position: fixed; inset: 0; z-index: 800;
-      background: #fffdf6;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 1.2rem; text-align: center; padding: 2rem;
-      transition: opacity 0.6s ease;
-    }
-    #music-prompt.hidden { opacity: 0; pointer-events: none; }
-
-    #music-prompt .mascot-big { font-size: 5rem; animation: bounce 2s ease-in-out infinite; }
-    @keyframes bounce {
-      0%,100% { transform: translateY(0) rotate(-4deg); }
-      50%      { transform: translateY(-14px) rotate(4deg); }
-    }
-    #music-prompt h1 {
-      font-family: 'Pacifico', cursive;
-      font-size: clamp(1.6rem, 5vw, 2.8rem);
-      color: #2d2728; margin: 0;
-    }
-    #music-prompt p {
-      font-family: 'Caveat', cursive; font-size: 1.15rem;
-      color: #8a7b82; margin: 0;
-    }
-    #start-btn {
-      background: #ffb3d4; color: #2d2728;
-      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem;
-      border: none; border-radius: 50px; padding: 0.9rem 2.5rem;
-      cursor: pointer;
-      box-shadow: 0 6px 0 rgba(200,100,140,0.35);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    #start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(200,100,140,0.35); }
-    #start-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(200,100,140,0.35); }
-
-    /* ── Horizontal scroll wrapper ───────────────────────── */
-    #journey-wrap {
-      position: absolute; inset: 0;
-      overflow-x: scroll; overflow-y: hidden;
-      cursor: grab;
-      user-select: none;
-      -webkit-overflow-scrolling: touch;
-    }
-    #journey-wrap:active { cursor: grabbing; }
-    #journey-wrap::-webkit-scrollbar { height: 0; }
-
-    /* ── Inner track ─────────────────────────────────────── */
-    #journey-inner {
-      position: relative;
-      height: 100%;
-      /* width set by JS based on number of stops */
-      width: 4200px;
-      display: flex; align-items: center;
-    }
-
-    /* ── Scattered stars ─────────────────────────────────── */
-    .star-bg {
-      position: absolute; pointer-events: none; font-size: 0.9rem;
-      opacity: 0.25; animation: star-float 5s ease-in-out infinite alternate;
-    }
-    @keyframes star-float {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-10px); }
-    }
-
-    /* ── SVG trail ───────────────────────────────────────── */
-    #trail-svg {
-      position: absolute;
-      top: 50%; transform: translateY(-50%);
-      left: 0;
-      width: 4200px;
-      height: 340px;
-      pointer-events: none;
-      overflow: visible;
-    }
-
-    #bee-trail {
-      fill: none;
-      stroke: #ffb3d4;
-      stroke-width: 3;
-      stroke-dasharray: 12 10;
-      stroke-linecap: round;
-    }
-
-    /* Progress fill (animated as user scrolls) */
-    #bee-trail-progress {
-      fill: none;
-      stroke: #ff8fb8;
-      stroke-width: 3.5;
-      stroke-linecap: round;
-      /* stroke-dasharray / offset set by JS */
-    }
-
-    /* ── Bee dot that travels the path ───────────────────── */
-    #bee {
-      position: absolute;
-      font-size: 1.6rem;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      filter: drop-shadow(0 2px 6px rgba(255,180,100,0.4));
-      transition: left 0.1s linear, top 0.1s linear;
-      z-index: 20;
-    }
-
-    /* ── Photo stops ─────────────────────────────────────── */
-    .photo-stop {
-      position: absolute;
-      display: flex; flex-direction: column; align-items: center;
-      z-index: 10;
-      opacity: 0; pointer-events: none;
-      transform: scale(0.7) translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .photo-stop.revealed {
-      opacity: 1; pointer-events: all;
-      transform: scale(1) translateY(0);
-    }
-
-    /* Chapter label above photo */
-    .stop-label {
-      font-family: 'Caveat', cursive; font-size: 0.78rem; font-weight: 700;
-      letter-spacing: 0.18em; color: #8a7b82;
-      text-transform: uppercase; margin-bottom: 0.4rem;
-    }
-
-    /* Polaroid */
-    .polaroid {
-      background: #fffcf4;
-      padding: 10px 10px 44px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.08);
-      position: relative; border-radius: 2px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: default;
-    }
-    .polaroid:hover {
-      transform: scale(1.06) rotate(0deg) !important;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
-      z-index: 30;
-    }
-    .polaroid .photo-ph {
-      width: 190px; height: 148px; display: block;
-      border-radius: 1px;
-    }
-    /* placeholder gradient fills */
-    .ph-1 { background: linear-gradient(135deg,#ffb3d4 0%,#ffd6e8 50%,#ffe8c8 100%); }
-    .ph-2 { background: linear-gradient(120deg,#a8f0d8 0%,#c8f5ff 60%,#d4b8ff 100%); }
-    .ph-3 { background: linear-gradient(145deg,#ffe699 0%,#ffcba8 55%,#ffb3d4 100%); }
-    .ph-4 { background: linear-gradient(130deg,#d4b8ff 0%,#b8d8ff 50%,#a8f0d8 100%); }
-    .ph-5 { background: linear-gradient(150deg,#ffcba8 0%,#ffe699 55%,#b8f5c0 100%); }
-    .ph-6 { background: linear-gradient(160deg,#ffb3d4 0%,#d4b8ff 50%,#a0d9ff 100%); }
-    /* noise overlay on placeholders */
-    .photo-ph { position: relative; overflow: hidden; }
-    .photo-ph::after {
-      content:''; position:absolute; inset:0;
-      background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-      mix-blend-mode: multiply;
-    }
-
-    /* Real photos (override placeholder) */
-    .polaroid img {
-      width: 190px; height: 148px; display: block;
-      object-fit: cover; border-radius: 1px;
-      filter: sepia(10%) contrast(1.03) brightness(0.97);
-    }
-
-    /* Tape */
-    .polaroid::before {
-      content:''; position:absolute; top:-11px; left:50%; transform:translateX(-50%);
-      width:55px; height:20px; border-radius:3px;
-    }
-    .tape-pink::before   { background: rgba(255,179,212,0.65); }
-    .tape-mint::before   { background: rgba(168,240,216,0.65); }
-    .tape-yellow::before { background: rgba(255,230,100,0.65); }
-    .tape-lavender::before { background: rgba(212,184,255,0.65); }
-    .tape-peach::before  { background: rgba(255,203,168,0.65); }
-    .tape-sky::before    { background: rgba(160,217,255,0.65); }
-
-    /* Caption */
-    .polaroid-caption {
-      position: absolute; bottom: 7px; left: 0; right: 0;
-      text-align: center;
-      font-family: 'Caveat', cursive; font-size: 0.88rem; font-weight: 600;
-      color: #4a3a2a;
-    }
-
-    /* ── Chapter title card (non-photo stop) ─────────────── */
-    .title-card {
-      position: absolute;
-      font-family: 'Pacifico', cursive;
-      font-size: clamp(1.4rem, 3vw, 2.2rem);
-      color: #2d2728;
-      line-height: 1.4;
-      text-align: center;
-      max-width: 320px;
-      opacity: 0; pointer-events: none;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    .title-card.revealed { opacity: 1; transform: translateY(0); }
-    .title-card .sub {
-      display: block; font-family: 'Caveat', cursive;
-      font-size: 1.1rem; color: #8a7b82; margin-top: 0.4rem;
-    }
-
-    /* ── Final chapter ────────────────────────────────────── */
-    .final-stop {
-      position: absolute;
-      text-align: center;
-      opacity: 0; pointer-events: none;
-      transform: scale(0.85);
-      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .final-stop.revealed { opacity: 1; transform: scale(1); }
-
-    .final-stop h2 {
-      font-family: 'Pacifico', cursive;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      color: #ff8fb8; margin-bottom: 0.5rem;
-    }
-    .final-stop .final-date {
-      font-family: 'Pacifico', cursive;
-      font-size: clamp(3rem, 8vw, 5.5rem);
-      color: #d4b8ff; line-height: 1;
-      filter: drop-shadow(0 4px 12px rgba(180,140,255,0.3));
-    }
-    .final-stop .final-sub {
-      font-family: 'Caveat', cursive; font-size: 1.2rem;
-      color: #8a7b82; margin-top: 0.6rem;
-    }
-    .final-stop .confetti-text {
-      font-size: 2rem; letter-spacing: 0.5rem;
-      animation: confetti-dance 1.5s ease-in-out infinite alternate;
-    }
-    @keyframes confetti-dance {
-      from { transform: rotate(-5deg); }
-      to   { transform: rotate(5deg); }
-    }
-
-    /* ── Chapter progress dots (bottom) ─────────────────── */
-    #chapter-dots {
-      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 8px; z-index: 100; pointer-events: none;
-    }
-    .ch-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #d4b8ff; opacity: 0.35;
-      transition: all 0.4s ease;
-    }
-    .ch-dot.active {
-      background: #ff8fb8; opacity: 1; transform: scale(1.4);
-    }
-
-    /* ── Scroll hint ─────────────────────────────────────── */
-    #scroll-hint {
-      position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
-      font-size: 2rem; color: #ffb3d4; pointer-events: none; z-index: 100;
-      animation: hint-bounce 1.5s ease-in-out infinite;
-      transition: opacity 0.5s ease;
-    }
-    #scroll-hint.gone { opacity: 0; }
-    @keyframes hint-bounce {
-      0%,100% { transform: translateY(-50%) translateX(0); }
-      50%      { transform: translateY(-50%) translateX(8px); }
-    }
-
-    /* ── Vinyl player (pastel, whimsical) ────────────────── */
-    #vinyl-player {
-      position: fixed; bottom: 1.5rem; right: 1.5rem;
-      width: 185px; background: #d4b8ff;
-      border-radius: 20px; padding: 1rem;
-      z-index: 500;
-      box-shadow: 0 6px 0 rgba(150,110,220,0.35), 0 8px 28px rgba(0,0,0,0.12);
-      transition: transform 0.3s ease;
-    }
-    #vinyl-player:hover { transform: translateY(-3px); }
-
-    #player-toggle {
-      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-      width: 26px; height: 26px; border-radius: 50%;
-      background: #ffb3d4; border: none; cursor: pointer;
-      font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 3px 0 rgba(200,100,130,0.3); color: #2d2728;
-      transition: transform 0.2s ease;
-    }
-    #player-toggle:hover { transform: translateX(-50%) scale(1.15); }
-
-    .vinyl-disc-area {
-      display: flex; justify-content: center; margin-bottom: 0.6rem; position: relative;
-    }
-    #vinyl-disc {
-      width: 96px; height: 96px; border-radius: 50%; cursor: pointer;
-      background:
-        radial-gradient(circle at center, #ffe699 0%,#ffd060 14%,transparent 15%),
-        radial-gradient(circle at center, #2d2728 15%,#222 17%,transparent 18%),
-        repeating-radial-gradient(circle at center,#2d2728 0px,#3a3a3a 1px,#2d2728 2.5px);
-      box-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 6px 18px rgba(0,0,0,0.18);
-      animation: spin 3.5s linear infinite paused;
-      position: relative; z-index: 2;
-      transition: box-shadow 0.3s ease;
-    }
-    #vinyl-disc:hover { box-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 6px 28px rgba(212,184,255,0.6); }
-    #vinyl-disc.spinning { animation-play-state: running; }
-    @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-
-    .vinyl-label {
-      position: absolute; width: 36px; height: 36px; border-radius: 50%;
-      background: #ffe699; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; pointer-events: none; z-index: 3;
-    }
-
-    .song-info { text-align: center; margin-bottom: 0.5rem; overflow: hidden; }
-    #song-title {
-      font-family: 'Caveat', cursive; font-size: 0.92rem; font-weight: 700;
-      color: #2d2728; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    #song-artist {
-      font-size: 0.6rem; color: #8a7b82;
-      letter-spacing: 0.07em; text-transform: uppercase; margin-top: 1px;
-    }
-
-    .player-controls {
-      display: flex; align-items: center; justify-content: center; gap: 0.35rem;
-    }
-    .player-controls button {
-      background: rgba(255,255,255,0.6); border: none; cursor: pointer;
-      padding: 7px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #2d2728; box-shadow: 0 2px 0 rgba(0,0,0,0.1);
-      transition: all 0.2s ease;
-    }
-    .player-controls button:hover { background:#fff; transform:scale(1.12); }
-    #play-pause-btn { width:36px; height:36px; background:#ffb3d4 !important; }
-    #play-pause-btn:hover { background:#ff8fb8 !important; }
-
-    .player-click-hint {
-      text-align:center; font-size:0.58rem; color:#8a7b82; margin-top:0.35rem; font-style:italic;
-    }
-
-    /* ── Page veil for transitions ───────────────────────── */
-    #page-veil {
-      position:fixed; inset:0; background:#fffdf6;
-      z-index:9999; opacity:1; pointer-events:all;
-      transition: opacity 0.9s ease;
-    }
-
-    /* ── Hidden YT player ────────────────────────────────── */
-    #yt-hidden-player {
-      position:fixed; width:1px; height:1px;
-      bottom:0; right:0; opacity:0; pointer-events:none; z-index:-1;
-    }
-  </style>
 </head>
 <body>
 
-  <!-- Page fade-in veil -->
+  <!-- Page veil for smooth entrance -->
   <div id="page-veil"></div>
 
-  <!-- Hidden YT iframe target -->
-  <div id="yt-hidden-player"></div>
-
-  <!-- ══════════════════════════════════════════════════════════
-       START SCREEN — click to begin + start music
-  ══════════════════════════════════════════════════════════ -->
-  <div id="music-prompt">
-    <div class="mascot-big">🐝</div>
-    <h1>follow the bee 🌸</h1>
-    <p>scroll sideways to travel through Asma's story</p>
-    <p style="font-size:0.85rem; color:#c8b0c0;">tip: scroll with your mouse wheel or drag!</p>
-    <button id="start-btn" onclick="startJourney()">let's go! ✨</button>
+  <!-- Big disclaimer (No emojis) -->
+  <div id="protocol-warn" class="big-disclaimer" style="display:none;">
+    music plays best when running locally via server (npx live-server or localhost)
   </div>
 
-  <!-- Scroll hint arrow -->
+  <!-- ════════ START SCREEN ════════ -->
+  <div id="music-prompt">
+    <!-- Whimsical SVG Bumblebee mascot -->
+    <div style="width:90px;height:75px;margin-bottom:0.5rem;">
+      <svg width="100%" height="100%" viewBox="0 0 40 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.8" transform="rotate(-25 14 9)"/>
+        <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.8" transform="rotate(15 23 8)"/>
+        <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060"/>
+        <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
+        <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="28" cy="18" r="2" fill="#2d2728"/>
+        <circle cx="26" cy="22" r="2.5" fill="#ffb3d4"/>
+        <polygon points="5,20 2,18 2,22" fill="#2d2728"/>
+        <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>follow the bee</h1>
+    <p>scroll sideways to travel through Asma's story</p>
+    <p style="font-size:0.95rem;color:#c8b0c0;">drag, mouse-wheel, or arrow keys</p>
+    <button id="start-btn" onclick="startJourney()">let's go</button>
+  </div>
+
+  <!-- Scroll hint -->
   <div id="scroll-hint">→</div>
 
-  <!-- Chapter progress dots -->
+  <!-- Chapter dots (7 dots: opener + 6 stops) -->
   <div id="chapter-dots">
     <div class="ch-dot active"></div>
     <div class="ch-dot"></div>
@@ -405,247 +55,310 @@
     <div class="ch-dot"></div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       VINYL RECORD PLAYER
-  ══════════════════════════════════════════════════════════ -->
+  <!-- ════════ TURNTABLE & VINYL PLAYER ════════ -->
   <div id="vinyl-player" role="region" aria-label="Music player">
-    <button id="player-toggle" onclick="togglePlayer()" title="Collapse player">▼</button>
+    <button id="player-toggle" onclick="togglePlayerCollapse()" title="Collapse">▼</button>
     <div id="player-body">
-      <div class="vinyl-disc-area">
+      <!-- Turntable visual with vinyl and tonearm -->
+      <div class="turntable-deck">
         <div id="vinyl-disc">
-          <div class="vinyl-label">🎵</div>
+          <div class="vinyl-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#2d2728">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
         </div>
+        <div id="turntable-arm"></div>
       </div>
+
       <div class="song-info">
-        <p id="song-title">click ▶ to play</p>
-        <p id="song-artist">BTS · AOT</p>
+        <p id="song-title">Friends</p>
+        <p id="song-artist">BTS</p>
       </div>
+
       <div class="player-controls">
-        <button onclick="prevSong()" title="Previous" aria-label="Previous">
+        <button onclick="prevSong()" aria-label="Previous">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
         </button>
-        <button id="play-pause-btn" onclick="togglePlay()" title="Play / Pause" aria-label="Play or Pause">
+        <button id="play-pause-btn" onclick="togglePlay()" aria-label="Play/Pause">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <button onclick="nextSong()" title="Next" aria-label="Next">
+        <button onclick="nextSong()" aria-label="Next">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 4V6l-5.5 4z"/></svg>
         </button>
       </div>
-      <p class="player-click-hint">click the vinyl or ▶ to play 🎵</p>
+      <p class="player-click-hint" id="player-hint">click play or the vinyl</p>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       HORIZONTAL JOURNEY
-  ══════════════════════════════════════════════════════════ -->
+  <!-- ════════ VIDEO MODAL (Pauses background music when opened) ════════ -->
+  <div id="video-modal">
+    <div class="video-modal-card">
+      <h3 style="font-family:'Pacifico',cursive;font-size:1.4rem;color:#2d2728;margin-bottom:0.5rem;">gol gappay session</h3>
+      <div style="position:relative;background:#000;border-radius:8px;overflow:hidden;">
+        <!-- Embedded player placeholder or video clip -->
+        <video id="chapter-video-player" controls style="width:100%;height:280px;display:block;" poster="assets/images/video_placeholder.png">
+          <source src="" type="video/mp4">
+          your browser does not support HTML video.
+        </video>
+      </div>
+      <p style="font-family:'Caveat',cursive;font-size:1.15rem;color:#8a7b82;margin-top:0.7rem;">
+        ap ne tou hum se gol gappay khany seekhay ab shadi kr rahi?
+      </p>
+      <button class="close-modal-btn" onclick="closeChapterVideo()">close video & resume song</button>
+    </div>
+  </div>
+
+  <!-- ════════ LETTER OVERLAY (Modal) ════════ -->
+  <div id="letter-overlay">
+    <div class="letter-card">
+      <button id="close-letter" onclick="closeLetter()">close [✕]</button>
+      <div class="letter-from">to Asma, from Tehrim</div>
+      <div class="letter-body">
+You are the reason that I finally talked about my emotions and stop suppressing them. You got me into Attack on Titan, Genshin Impact and now I enjoy these soft little playful moments with you. You showed me the love that Cardan has for Jude through books. And I'm really happy that you were as my family. I really really love you and I hope that Sikhandar also loves you. I wish you the best of love janiii.... and may we continue playing together tehe ..... YOU BETTER CRY BITCH.
+      </div>
+      <div class="letter-sig">— Tehrim</div>
+    </div>
+  </div>
+
+  <!-- ════════ HORIZONTAL JOURNEY ════════ -->
   <div id="journey-wrap">
     <div id="journey-inner">
 
-      <!-- ── SVG BEE TRAIL ──────────────────────────────── -->
+      <!-- Dreamy Ambient Floating Orbs -->
+      <div class="ambient-orb" style="width:380px;height:380px;left:200px;top:10%;background:#ffdbe9;"></div>
+      <div class="ambient-orb" style="width:420px;height:420px;left:1000px;top:55%;background:#e5dbff;"></div>
+      <div class="ambient-orb" style="width:360px;height:360px;left:1800px;top:15%;background:#fff2c2;"></div>
+      <div class="ambient-orb" style="width:400px;height:400px;left:2600px;top:60%;background:#d8f8ee;"></div>
+      <div class="ambient-orb" style="width:450px;height:450px;left:3400px;top:10%;background:#ffd6eb;"></div>
+      <div class="ambient-orb" style="width:400px;height:400px;left:4100px;top:50%;background:#e0d8ff;"></div>
+
+      <!-- Whimsical Pastel Floating Clouds -->
+      <div class="whimsical-cloud" style="left:380px;top:14%;">
+        <svg width="120" height="60" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+      <div class="whimsical-cloud" style="left:1220px;top:72%;">
+        <svg width="140" height="70" viewBox="0 0 120 60" fill="#ffffff" opacity="0.82">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+      <div class="whimsical-cloud" style="left:1900px;top:12%;">
+        <svg width="110" height="55" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+      <div class="whimsical-cloud" style="left:2750px;top:75%;">
+        <svg width="130" height="65" viewBox="0 0 120 60" fill="#ffffff" opacity="0.84">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+      <div class="whimsical-cloud" style="left:3500px;top:15%;">
+        <svg width="125" height="62" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+      <div class="whimsical-cloud" style="left:4250px;top:70%;">
+        <svg width="135" height="68" viewBox="0 0 120 60" fill="#ffffff" opacity="0.83">
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+        </svg>
+      </div>
+
+      <!-- SVG TRAIL -->
       <svg id="trail-svg" xmlns="http://www.w3.org/2000/svg">
-        <!-- Background dashed trail (static) -->
         <path id="bee-trail"
-          d="M 80,170
-             C 280,60  480,290  680,170
-             C 880,50  1080,300 1280,170
-             C 1480,40 1680,300 1880,170
-             C 2080,40 2280,300 2480,170
-             C 2680,40 2880,300 3080,170
-             C 3280,40 3480,300 3680,170
-             C 3900,40 4100,200 4120,170" />
-        <!-- Coloured progress path (same shape, drawn as user scrolls) -->
+          d="M 80,170 C 330,55 530,300 730,170 C 930,40 1130,300 1330,170 C 1530,40 1730,300 1930,170 C 2130,40 2330,300 2530,170 C 2730,40 2930,300 3130,170 C 3330,40 3530,300 3730,170 C 3820,70 3900,270 3980,170" />
         <path id="bee-trail-progress"
-          d="M 80,170
-             C 280,60  480,290  680,170
-             C 880,50  1080,300 1280,170
-             C 1480,40 1680,300 1880,170
-             C 2080,40 2280,300 2480,170
-             C 2680,40 2880,300 3080,170
-             C 3280,40 3480,300 3680,170
-             C 3900,40 4100,200 4120,170"
-          stroke="#d4b8ff" stroke-width="3.5" fill="none" stroke-linecap="round" />
+          d="M 80,170 C 330,55 530,300 730,170 C 930,40 1130,300 1330,170 C 1530,40 1730,300 1930,170 C 2130,40 2330,300 2530,170 C 2730,40 2930,300 3130,170 C 3330,40 3530,300 3730,170 C 3820,70 3900,270 3980,170" />
       </svg>
 
-      <!-- ── BEE DOT ─────────────────────────────────────── -->
-      <div id="bee">🐝</div>
+      <!-- Whimsical SVG Bumblebee flying along the trail -->
+      <div id="bee">
+        <svg width="42" height="36" viewBox="0 0 40 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.85" transform="rotate(-25 14 9)"/>
+          <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.85" transform="rotate(15 23 8)"/>
+          <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060"/>
+          <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
+          <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="28" cy="18" r="2" fill="#2d2728"/>
+          <circle cx="26" cy="22" r="2.5" fill="#ffb3d4"/>
+          <polygon points="5,20 2,18 2,22" fill="#2d2728"/>
+          <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
 
-      <!-- ── SCATTERED STARS (decorative) ──────────────── -->
-      <span class="star-bg" style="left:150px;  top:15%;  color:#ffb3d4; animation-delay:0s;">★</span>
-      <span class="star-bg" style="left:400px;  top:80%;  color:#a8f0d8; animation-delay:0.7s;">✦</span>
-      <span class="star-bg" style="left:750px;  top:12%;  color:#d4b8ff; animation-delay:0.3s;">✶</span>
-      <span class="star-bg" style="left:1100px; top:78%;  color:#ffe699; animation-delay:1.1s;">★</span>
-      <span class="star-bg" style="left:1500px; top:20%;  color:#ffcba8; animation-delay:0.5s;">✦</span>
-      <span class="star-bg" style="left:1800px; top:75%;  color:#a0d9ff; animation-delay:0.9s;">✶</span>
-      <span class="star-bg" style="left:2200px; top:18%;  color:#ffb3d4; animation-delay:0.2s;">★</span>
-      <span class="star-bg" style="left:2600px; top:82%;  color:#b8f5c0; animation-delay:1.3s;">✦</span>
-      <span class="star-bg" style="left:3000px; top:22%;  color:#d4b8ff; animation-delay:0.4s;">✶</span>
-      <span class="star-bg" style="left:3400px; top:72%;  color:#ffe699; animation-delay:0.8s;">★</span>
-      <span class="star-bg" style="left:3800px; top:15%;  color:#ff9fb0; animation-delay:0.6s;">✦</span>
+      <!-- Scattered background stars (no emojis) -->
+      <span class="star-bg" style="left:150px;top:15%;color:#ffb3d4;animation-delay:0s;">★</span>
+      <span class="star-bg" style="left:450px;top:80%;color:#a8f0d8;animation-delay:0.7s;">✦</span>
+      <span class="star-bg" style="left:820px;top:12%;color:#d4b8ff;animation-delay:0.3s;">✶</span>
+      <span class="star-bg" style="left:1200px;top:78%;color:#ffe699;animation-delay:1.1s;">★</span>
+      <span class="star-bg" style="left:1620px;top:18%;color:#ffcba8;animation-delay:0.5s;">✦</span>
+      <span class="star-bg" style="left:1980px;top:76%;color:#a0d9ff;animation-delay:0.9s;">✶</span>
+      <span class="star-bg" style="left:2350px;top:16%;color:#ffb3d4;animation-delay:0.2s;">★</span>
+      <span class="star-bg" style="left:2800px;top:82%;color:#b8f5c0;animation-delay:1.3s;">✦</span>
+      <span class="star-bg" style="left:3200px;top:20%;color:#d4b8ff;animation-delay:0.4s;">✶</span>
+      <span class="star-bg" style="left:3700px;top:74%;color:#ffe699;animation-delay:0.8s;">★</span>
+      <span class="star-bg" style="left:4200px;top:15%;color:#ff9fb0;animation-delay:0.6s;">✦</span>
 
-      <!-- ══════════════════════════════════════════════════
-           CHAPTER TITLE CARDS & PHOTO STOPS
-      ══════════════════════════════════════════════════ -->
-
-      <!-- ── CHAPTER 0 — Opener ─────────────────────────── -->
-      <div class="title-card" id="title-0"
-        style="left:120px; top:50%; transform:translateY(-50%);">
-        <span style="font-size:2.5rem;">🎀</span><br>
+      <!-- ════════ CHAPTER 0 — OPENER ════════ -->
+      <div class="title-card" id="title-0" style="left:120px;top:50%;transform:translateY(-50%);">
+        <div style="font-size:1.8rem;color:#ff8fb8;margin-bottom:0.4rem;">✦</div>
         Asma's Story
-        <span class="sub">a journey from the very beginning</span>
-        <span class="sub" style="font-size:0.85rem; color:#c8b0c0; margin-top:0.4rem; display:block;">
-          scroll → to continue
+        <span class="sub">from the very beginning<br>
+          <span style="font-size:0.85rem;color:#c8b0c0;">scroll → to continue</span>
         </span>
       </div>
 
-      <!-- ── CHAPTER 1 — Day 1 ──────────────────────────── -->
-      <!-- Photo stop: above trail -->
-      <div class="photo-stop" id="stop-1"
-        style="left: 580px; top: calc(50% - 220px);">
+      <!-- ════════ CHAPTER 1 — HORIZONTAL YELLOW EGG CRACKING ════════ -->
+      <div class="photo-stop" id="stop-1" style="left:720px;top:calc(50% - 225px);">
         <span class="stop-label">chapter one</span>
-        <div class="polaroid tape-pink" style="transform:rotate(-4deg);">
-          <img src="assets/images/photo_roses.png" alt="chapter 1"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-1" style="display:none;"></div>
-          <span class="polaroid-caption">day one. already iconic.</span>
+        <div class="horizontal-egg-stage tape-yellow" id="egg-card" onclick="toggleEggCrack()">
+          <!-- Seamless intact yellow egg shell (ZERO cracks before cracking!) -->
+          <div class="egg-shell-intact"></div>
+          <!-- Yellow shell halves that split horizontally -->
+          <div class="egg-shell-left"></div>
+          <div class="egg-shell-right"></div>
+          <!-- Little Asma cutout photo that flows out of the egg -->
+          <div class="egg-picture-card">
+            <img src="assets/images/egg_placeholder.png" alt="baby Asma photo" />
+          </div>
         </div>
-        <div style="font-family:'Caveat',cursive; font-size:1rem; color:#8a7b82; margin-top:0.8rem; text-align:center; max-width:210px;">
-          she arrived and immediately <br>made it everyone's problem. 😌
-        </div>
+        <p class="stop-note">ap tou anday se nikli wow aur ab mujhe aese dekh rahi.</p>
       </div>
 
-      <!-- Chapter 1 title card: below trail -->
-      <div class="title-card" id="title-1"
-        style="left: 550px; top: calc(50% + 130px);">
-        the tiny one arrived
-        <span class="sub">she was loud. she had opinions.<br>she was 3 days old.</span>
-      </div>
-
-      <!-- ── CHAPTER 2 — Childhood ──────────────────────── -->
-      <!-- Photo stop: below trail -->
-      <div class="photo-stop" id="stop-2"
-        style="left: 1060px; top: calc(50% + 60px);">
-        <div class="polaroid tape-mint" style="transform:rotate(3deg);">
-          <img src="assets/images/photo_stars.png" alt="chapter 2"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-2" style="display:none;"></div>
-          <span class="polaroid-caption">peak era, honestly.</span>
+      <!-- ════════ CHAPTER 2 — GOL GAPPAY VIDEO CHAPTER ════════ -->
+      <div class="photo-stop" id="stop-2" style="left:1380px;top:calc(50% + 55px);">
+        <span class="stop-label">chapter two</span>
+        <div class="polaroid tape-mint" style="transform:rotate(2deg);">
+          <!-- Gol Gappay theme badge -->
+          <div class="theme-badge" title="gol gappay">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d2728" stroke-width="2">
+              <path d="M3 12h18c0 5-4 9-9 9s-9-4-9-9z" fill="#ffe699"/>
+              <circle cx="8" cy="11" r="3" fill="#ffcba8"/>
+              <circle cx="14" cy="10" r="3.2" fill="#ffd060"/>
+              <circle cx="11" cy="7" r="2.8" fill="#ffd6e8"/>
+            </svg>
+          </div>
+          <div class="video-frame" onclick="openChapterVideo()">
+            <img src="assets/images/video_placeholder.png" alt="video placeholder" />
+            <div class="video-play-overlay">
+              <div class="play-triangle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="font-family:'Caveat',cursive; font-size:1rem; color:#8a7b82; margin-top:0.8rem; text-align:center; max-width:210px;">
-          this was before BTS.<br>simpler times. 🕊️
-        </div>
+        <p class="stop-note">ap ne tou hum se gol gappay khany seekhay ab shadi kr rahi?</p>
       </div>
 
-      <!-- Chapter 2 title card: above trail -->
-      <div class="title-card" id="title-2"
-        style="left: 1010px; top: calc(50% - 200px);">
-        the chaos years
-        <span class="sub">also known as: everyone's favourite era.<br>don't argue.</span>
-      </div>
-
-      <!-- ── CHAPTER 3 — Growing up ─────────────────────── -->
-      <!-- Photo stop 3a: above trail -->
-      <div class="photo-stop" id="stop-3a"
-        style="left: 1460px; top: calc(50% - 240px);">
+      <!-- ════════ CHAPTER 3 — HARRY POTTER CHAPTER ════════ -->
+      <div class="photo-stop" id="stop-3" style="left:2020px;top:calc(50% - 225px);">
         <span class="stop-label">chapter three</span>
-        <div class="polaroid tape-yellow" style="transform:rotate(-2deg);">
-          <img src="assets/images/photo_book.png" alt="chapter 3a"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-3" style="display:none;"></div>
-          <span class="polaroid-caption">us 🤝 memories</span>
+        <div class="polaroid tape-gold hp-polaroid" style="transform:rotate(-3deg);">
+          <!-- Flying Golden Snitch SVG badge -->
+          <div class="hp-snitch" title="golden snitch">
+            <svg width="44" height="32" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="22" cy="18" r="6.5" fill="#f5b820" stroke="#d3a625" stroke-width="1.5"/>
+              <path d="M16 16 C10 12, 3 8, 2 3 C9 5, 14 10, 16 16 Z" fill="#fff9c4" stroke="#d3a625" stroke-width="1"/>
+              <path d="M28 16 C34 12, 41 8, 42 3 C35 5, 30 10, 28 16 Z" fill="#fff9c4" stroke="#d3a625" stroke-width="1"/>
+            </svg>
+          </div>
+          <!-- Harry Potter Glasses & Lightning bolt badge -->
+          <div class="theme-badge" style="border-color:#d3a625;" title="harry potter">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d2728" stroke-width="1.8">
+              <circle cx="7" cy="13" r="4.5"/>
+              <circle cx="17" cy="13" r="4.5"/>
+              <path d="M11.5 13h1"/>
+              <path d="M11 5 L9 8 L12 8 L10 12" stroke="#d3a625" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <img src="assets/images/harrypotter_placeholder.png" alt="Harry Potter marathon" />
         </div>
+        <p class="stop-note">she made me watch harry potter lol</p>
       </div>
 
-      <!-- Photo stop 3b: below trail -->
-      <div class="photo-stop" id="stop-3b"
-        style="left: 1700px; top: calc(50% + 65px);">
-        <div class="polaroid tape-lavender" style="transform:rotate(5deg);">
-          <img src="assets/images/photo_letter.png" alt="chapter 3b"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-4" style="display:none;"></div>
-          <span class="polaroid-caption">okay you were cute. barely.</span>
-        </div>
-        <div style="font-family:'Caveat',cursive; font-size:1rem; color:#8a7b82; margin-top:0.8rem; text-align:center; max-width:210px;">
-          don't let it go to your head.
-        </div>
-      </div>
-
-      <!-- Chapter 3 title card -->
-      <div class="title-card" id="title-3"
-        style="left: 1560px; top: calc(50% - 50px);">
-        growing up (together, unfortunately)
-        <span class="sub">you were there. I was there.<br>we survived. barely.</span>
-      </div>
-
-      <!-- ── CHAPTER 4 — The BTS Era ────────────────────── -->
-      <!-- Photo stop: above trail -->
-      <div class="photo-stop" id="stop-4"
-        style="left: 2260px; top: calc(50% - 230px);">
+      <!-- ════════ CHAPTER 4 — GENSHIN IMPACT ════════ -->
+      <div class="photo-stop" id="stop-4" style="left:2680px;top:calc(50% + 55px);">
         <span class="stop-label">chapter four</span>
-        <div class="polaroid tape-pink" style="transform:rotate(-5deg);">
-          <img src="assets/images/photo_hands.png" alt="chapter 4"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-5" style="display:none;"></div>
-          <span class="polaroid-caption">she cried. again. 🎵</span>
+        <div class="polaroid tape-mint genshin-polaroid" style="transform:rotate(2.5deg);">
+          <!-- Glowing Primogem SVG badge -->
+          <div class="primogem-deco" title="primogem">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <polygon points="18,3 23,13 33,18 23,23 18,33 13,23 3,18 13,13" fill="#80c5ff" stroke="#fff" stroke-width="1.5"/>
+              <polygon points="18,7 21,14 28,18 21,22 18,29 15,22 8,18 15,14" fill="#ffb3d4"/>
+            </svg>
+          </div>
+          <img src="assets/images/genshin_placeholder.png" alt="Genshin Impact" />
         </div>
-        <div style="font-family:'Caveat',cursive; font-size:1rem; color:#8a7b82; margin-top:0.8rem; text-align:center; max-width:210px;">
-          she once cried 3 hours over <br>a fictional soldier. icon behaviour.
-        </div>
+        <p class="stop-note">i really love when we game.</p>
       </div>
 
-      <!-- Chapter 4 title card: below -->
-      <div class="title-card" id="title-4"
-        style="left: 2210px; top: calc(50% + 130px);">
-        the BTS & AOT era 🎵
-        <span class="sub">she built a whole personality<br>out of a playlist. respect.</span>
-      </div>
-
-      <!-- ── CHAPTER 5 — The news ───────────────────────── -->
-      <!-- Photo stop: below trail -->
-      <div class="photo-stop" id="stop-5"
-        style="left: 2860px; top: calc(50% + 60px);">
+      <!-- ════════ CHAPTER 5 — SPIDER-MAN CAROUSEL ════════ -->
+      <div class="photo-stop" id="stop-5" style="left:3360px;top:calc(50% - 225px);">
         <span class="stop-label">chapter five</span>
-        <div class="polaroid tape-sky" style="transform:rotate(3deg);">
-          <img src="assets/images/photo_golden.png" alt="chapter 5"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-          <div class="photo-ph ph-6" style="display:none;"></div>
-          <span class="polaroid-caption">plot twist incoming 🎬</span>
+        <div class="carousel-card tape-spidey spiderman-theme-card" style="transform:rotate(-2deg);">
+          <!-- Spiderweb corner overlays -->
+          <svg class="spidey-web-tl" viewBox="0 0 50 50" fill="none" stroke="#ff6b81" stroke-width="1.2">
+            <path d="M0 10 Q25 25 10 0 M0 25 Q35 35 25 0 M0 42 Q45 45 42 0"/>
+            <path d="M0 0 L50 50 M0 0 L25 50 M0 0 L50 25"/>
+          </svg>
+          <svg class="spidey-web-br" viewBox="0 0 50 50" fill="none" stroke="#4a90e2" stroke-width="1.2">
+            <path d="M50 40 Q25 25 40 50 M50 25 Q15 15 25 50 M50 8 Q5 5 8 50"/>
+            <path d="M50 50 L0 0 M50 50 L25 0 M50 50 L0 25"/>
+          </svg>
+          <!-- Spider-Man mask badge -->
+          <div class="spidey-mask-badge" title="spiderman">
+            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+              <ellipse cx="17" cy="17" rx="14" ry="16" fill="#ff6b81"/>
+              <path d="M10 13 Q14 11 16 17 Q12 18 10 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2"/>
+              <path d="M24 13 Q20 11 18 17 Q22 18 24 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2"/>
+              <path d="M17 3 L17 31 M3 17 L31 17" stroke="#2d2728" stroke-width="0.8" opacity="0.4"/>
+            </svg>
+          </div>
+
+          <div class="carousel-viewport">
+            <div class="carousel-slides" id="carousel-track">
+              <img src="assets/images/spiderman_1.png" alt="Spiderman 1" />
+              <img src="assets/images/spiderman_2.png" alt="Spiderman 2" />
+              <img src="assets/images/spiderman_3.png" alt="Spiderman 3" />
+              <img src="assets/images/spiderman_4.png" alt="Spiderman 4" />
+              <img src="assets/images/spiderman_5.png" alt="Spiderman 5" />
+            </div>
+            <button class="carousel-btn prev" onclick="prevCarouselSlide(event)">‹</button>
+            <button class="carousel-btn next" onclick="nextCarouselSlide(event)">›</button>
+          </div>
+          <div class="carousel-counter" id="carousel-indicator">photo 1 of 5</div>
         </div>
-        <div style="font-family:'Caveat',cursive; font-size:1rem; color:#8a7b82; margin-top:0.8rem; text-align:center; max-width:210px;">
-          okay FINE. we're happy for her.<br>(I'm happy. barely.) 🥲
-        </div>
+        <p class="stop-note">we at spiderman viewing</p>
       </div>
 
-      <!-- Chapter 5 title card: above -->
-      <div class="title-card" id="title-5"
-        style="left: 2820px; top: calc(50% - 220px);">
-        then fate got involved
-        <span class="sub">no warning. no trailer.<br>just: "btw she's getting married."<br>
-          <span style="font-size:0.85rem; color:#c8b0c0;">cool cool cool. fine. great. 👍</span>
-        </span>
-      </div>
-
-      <!-- ── CHAPTER 6 — October 23rd ───────────────────── -->
-      <div class="final-stop" id="stop-final"
-        style="left: 3700px; top:50%; transform:translateY(-50%);">
-        <div class="confetti-text">🎊 🎀 🎊</div>
+      <!-- ════════ CHAPTER 6 — FINAL: NEW BEGINNING ════════ -->
+      <div class="final-stop" id="stop-final" style="left:4050px;top:50%;transform:translateY(-50%);z-index:30;">
         <h2>October 23rd</h2>
         <div class="final-date">2026</div>
-        <div style="font-family:'Caveat',cursive; font-size:1.3rem; color:#8a7b82; margin-top:1rem; max-width:340px; line-height:1.6;">
-          today you become someone's problem forever.<br>
-          congratulations, honestly. 🎉<br>
-          <span style="font-size:1rem; color:#c8b0c0;">(we're proud of you. don't make it weird.)</span>
+        <div class="polaroid tape-gold wedding-theme-card" style="transform:rotate(-2deg);margin:1rem auto;">
+          <!-- Wedding Rings SVG Badge -->
+          <div class="wedding-rings-badge" title="nikkah wedding rings">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <circle cx="14" cy="18" r="9" stroke="#f5b820" stroke-width="2.5" fill="none"/>
+              <circle cx="22" cy="18" r="9" stroke="#ffd060" stroke-width="2.5" fill="none"/>
+              <polygon points="14,9 12,6 16,6" fill="#fff" stroke="#f5b820" stroke-width="1"/>
+            </svg>
+          </div>
+          <img src="assets/images/sikhandar_placeholder.png" alt="Sikhandar and Asma" />
         </div>
-        <div style="margin-top:1.2rem; font-family:'Pacifico',cursive; font-size:1.4rem; color:#ffb3d4;">
-          we love you, Asma 🌸
-        </div>
-        <div id="final-countdown" style="font-family:'Caveat',cursive; font-size:1rem; color:#d4b8ff; margin-top:0.5rem;"></div>
+        <div class="final-sub">to new beginnings, Mrs. Sikhandar</div>
+        <div id="final-countdown"></div>
+        <button id="open-letter-btn" onclick="openLetter()">
+          read the letter (warning: feelings ahead)
+        </button>
       </div>
 
     </div><!-- /#journey-inner -->
   </div><!-- /#journey-wrap -->
 
-  <!-- Creator credit easter egg -->
-  <div class="creator-credit" title="a tiny secret 🌸">made with 🩷 by tehrim</div>
+  <div class="creator-credit" title="love">made with love by tehrim</div>
 
   <script src="player.js"></script>
   <script src="journey.js"></script>

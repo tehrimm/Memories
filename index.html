@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>psst, Asma 🎀</title>
+  <title>psst, Asma</title>
   <meta name="description" content="i made something for you. do you wanna see it?" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,10 +42,10 @@
 
     /* character / mascot */
     .mascot {
-      font-size: clamp(4rem, 14vw, 7rem);
+      width: 90px; height: 90px;
       animation: mascot-bounce 2s ease-in-out infinite;
       filter: drop-shadow(0 6px 12px rgba(255,179,212,0.4));
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
     @keyframes mascot-bounce {
       0%, 100% { transform: translateY(0) rotate(-4deg); }
@@ -102,15 +102,16 @@
       font-size: clamp(0.85rem, 2vw, 1rem);
       padding: 0.7rem 1.8rem;
       box-shadow: 0 4px 0 rgba(200,140,100,0.3);
-      position: fixed; /* fixed so it can escape anywhere */
+      position: fixed;
       transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
                   top  0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
     }
 
     /* Try counter */
     #no-counter {
       position: fixed; bottom: 1.5rem; right: 1.5rem;
-      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
+      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
       opacity: 0; transition: opacity 0.3s ease; z-index: 100;
     }
     #no-counter.show { opacity: 1; }
@@ -137,7 +138,7 @@
     /* Countdown */
     .countdown-wrap { text-align: center; margin-bottom: 1.5rem; }
     .cd-label {
-      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
+      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
       letter-spacing: 0.15em; margin-bottom: 0.4rem;
     }
     .cd-timer {
@@ -195,8 +196,8 @@
     #mic-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
     .mic-hint {
-      font-family: var(--ff-hand); font-size: 0.9rem; color: var(--muted);
-      text-align: center; max-width: 280px;
+      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
+      text-align: center; max-width: 320px;
     }
 
     /* Success overlay after blow */
@@ -238,7 +239,7 @@
   <!-- Confetti container -->
   <div id="confetti-container" style="position:fixed;inset:0;pointer-events:none;z-index:200;"></div>
 
-  <!-- ── Floating star decorations ───────────────────────────── -->
+  <!-- Floating star decorations -->
   <span class="star-deco" style="top:8%; left:6%; font-size:1.5rem; color:var(--pink); animation-delay:0s;">★</span>
   <span class="star-deco" style="top:15%; right:8%; font-size:1rem; color:var(--mint); animation-delay:0.5s;">✦</span>
   <span class="star-deco" style="top:70%; left:5%; font-size:1.3rem; color:var(--lavender); animation-delay:1s;">✶</span>
@@ -253,8 +254,7 @@
 
   <!-- Success overlay -->
   <div id="success-overlay">
-    <div style="font-size:4rem;">🎉</div>
-    <h2>okay, now we're talking!</h2>
+    <h2>okay, now we are talking!</h2>
     <p>loading your story...</p>
   </div>
 
@@ -262,25 +262,34 @@
        SECTION 1 — "do you wanna see it?"
   ══════════════════════════════════════════════════════════ -->
   <section id="section-yesno" class="section">
-    <div class="mascot">🎀</div>
+    <!-- SVG Mascot Ribbon (no emojis) -->
+    <div class="mascot">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="36" fill="#ffd6e8"/>
+        <path d="M30 40 C30 25, 50 35, 50 48 C50 35, 70 25, 70 40 C70 55, 50 65, 50 65 C50 65, 30 55, 30 40 Z" fill="#ff8fb8"/>
+        <ellipse cx="50" cy="48" rx="8" ry="8" fill="#ffb3d4"/>
+        <path d="M43 55 L32 78 L46 72 L50 62" fill="#ff8fb8"/>
+        <path d="M57 55 L68 78 L54 72 L50 62" fill="#ff8fb8"/>
+      </svg>
+    </div>
 
     <h1 class="greeting-title">
       i made something for you
     </h1>
-    <p class="greeting-sub">do you wanna see it? 👀</p>
+    <p class="greeting-sub">do you wanna see it?</p>
 
     <div class="btn-row">
       <button class="bubble-btn" id="yes-btn" onclick="handleYes()">
-        YES 🎉
+        YES
       </button>
     </div>
 
     <button class="bubble-btn" id="no-btn" style="left:60%; top:55%;">
-      no thanks 😬
+      no thanks
     </button>
 
     <!-- No-click counter -->
-    <div id="no-counter">you've tried to escape <span id="no-count">0</span> times 💀</div>
+    <div id="no-counter">you've tried to escape <span id="no-count">0</span> times</div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -290,7 +299,7 @@
 
     <!-- Countdown -->
     <div class="countdown-wrap">
-      <p class="cd-label">⏳ until october 23rd</p>
+      <p class="cd-label">until october 23rd</p>
       <div class="cd-timer">
         <div class="cd-unit"><span class="cd-num" id="cd-days">05</span><span class="cd-lbl">days</span></div>
         <span class="cd-sep">:</span>
@@ -302,7 +311,7 @@
       </div>
     </div>
 
-    <h2 class="candle-page-title">okay now blow the candles 🕯️</h2>
+    <h2 class="candle-page-title">okay now blow the candles</h2>
     <p class="candle-page-sub">use your mic, or click each candle if mic is unavailable</p>
 
     <!-- Candles -->
@@ -358,7 +367,7 @@
           <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
           <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2z"/>
         </svg>
-        <span id="mic-btn-text">tap & blow 💨</span>
+        <span id="mic-btn-text">tap & blow</span>
       </button>
       <p class="mic-hint" id="mic-hint">tap the button first, then blow towards your screen</p>
     </div>
@@ -366,7 +375,7 @@
   </section>
 
   <!-- Creator credit easter egg -->
-  <div class="creator-credit" title="hehe">made with 🩷 by tehrim</div>
+  <div class="creator-credit" title="love">made with love by tehrim</div>
 
   <script src="main.js"></script>
 </body>

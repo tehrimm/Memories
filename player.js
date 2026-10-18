@@ -1,156 +1,162 @@
 /* ============================================================
-   player.js — Vinyl record player that ACTUALLY PLAYS music
-   Uses YouTube IFrame API with a visible play/pause interface
-   Requires the page to be served over HTTP (not file://)
+   player.js — Vinyl Record Player & Music Manager
+   - Real audio playback for:
+     1. BTS — Friends
+     2. BTS — Spring Day
+     3. V (BTS) — Sweet Night
+   - Turntable & Vinyl rotation
    ============================================================ */
 
 const PLAYLIST = [
-  /* BTS */
-  { title: "Spring Day",       artist: "BTS",    videoId: "xEeFrLSkMm8" },
-  { title: "Life Goes On",     artist: "BTS",    videoId: "xWmKDSuCDOk" },
-  { title: "Sweet Night",      artist: "V (BTS)",videoId: "VhBDk7SHJFQ"  },
-  { title: "Friends",          artist: "Jimin & V", videoId: "MBdVXkSdhwU" },
-  { title: "Boy With Luv",     artist: "BTS",    videoId: "XsX3ATc3FbA" },
-  { title: "Zero O'Clock",     artist: "BTS",    videoId: "3ATGwGqXC5Y"  },
-  /* Attack on Titan */
-  { title: "YouSeeBIGGIRL/T:T",artist: "AOT OST",videoId: "0sdaB4jEBGE" },
-  { title: "Vogel im Käfig",   artist: "AOT OST",videoId: "x4JMB5CbSPs" },
-  { title: "Barricades",       artist: "AOT OST",videoId: "aKHKyHhKDCE" },
+  {
+    title: "Friends",
+    artist: "BTS",
+    src: "assets/audio/friends.mp3"
+  },
+  {
+    title: "Spring Day",
+    artist: "BTS",
+    src: "assets/audio/spring_day.mp3"
+  },
+  {
+    title: "Sweet Night",
+    artist: "V (BTS)",
+    src: "assets/audio/sweet_night.mp3"
+  }
 ];
 
-let ytPlayer   = null;
-let currentIdx = 0;
-let isPlaying  = false;
-let ytReady    = false;
-let playerCollapsed = false;
-
-/* ── Load YouTube IFrame API ───────────────────────────── */
-(function loadYTAPI() {
-  const tag      = document.createElement('script');
-  tag.src        = 'https://www.youtube.com/iframe_api';
-  const first    = document.getElementsByTagName('script')[0];
-  first.parentNode.insertBefore(tag, first);
-})();
-
-/* ── Called by YouTube API when ready ──────────────────── */
-function onYouTubeIframeAPIReady() {
-  ytReady = true;
-
-  ytPlayer = new YT.Player('yt-hidden-player', {
-    height: '1',
-    width:  '1',
-    videoId: PLAYLIST[currentIdx].videoId,
-    playerVars: {
-      autoplay:       0,
-      controls:       0,
-      disablekb:      1,
-      fs:             0,
-      modestbranding: 1,
-      rel:            0,
-      playsinline:    1,
-    },
-    events: {
-      onReady:       onPlayerReady,
-      onStateChange: onPlayerStateChange,
-      onError:       onPlayerError,
-    },
-  });
+let currentSongIdx = parseInt(sessionStorage.getItem('wedding_song_idx') || '0', 10);
+if (isNaN(currentSongIdx) || currentSongIdx < 0 || currentSongIdx >= PLAYLIST.length) {
+  currentSongIdx = 0;
 }
 
-function onPlayerReady(event) {
-  updateSongDisplay();
-  // Show hint that player is ready
-  const hint = document.querySelector('.player-click-hint');
-  if (hint) hint.textContent = 'click ▶ to play 🎵';
-}
+let isAudioPlaying = false;
+let audioPlayer = null;
 
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.PLAYING) {
-    isPlaying = true;
-    document.getElementById('vinyl-disc').classList.add('spinning');
-    setPlayIcon(true);
-  } else if (event.data === YT.PlayerState.PAUSED ||
-             event.data === YT.PlayerState.BUFFERING) {
-    isPlaying = false;
-    document.getElementById('vinyl-disc').classList.remove('spinning');
-    setPlayIcon(false);
-  } else if (event.data === YT.PlayerState.ENDED) {
-    nextSong();
+function initAudio() {
+  if (!audioPlayer) {
+    audioPlayer = new Audio();
+    audioPlayer.preload = "auto";
+    audioPlayer.src = PLAYLIST[currentSongIdx].src;
+
+    audioPlayer.addEventListener('ended', () => {
+      nextSong();
+    });
+
+    audioPlayer.addEventListener('play', () => {
+      isAudioPlaying = true;
+      setPlayerVisuals(true);
+    });
+
+    audioPlayer.addEventListener('pause', () => {
+      isAudioPlaying = false;
+      setPlayerVisuals(false);
+    });
+
+    audioPlayer.addEventListener('error', (e) => {
+      console.warn("Audio element error:", e);
+    });
   }
 }
 
-function onPlayerError(event) {
-  console.warn('YT player error:', event.data);
-  // Try next song if current one fails
-  nextSong();
+function updateSongInfo() {
+  const song = PLAYLIST[currentSongIdx];
+  const titleEl = document.getElementById('song-title');
+  const artistEl = document.getElementById('song-artist');
+
+  if (titleEl) titleEl.textContent = song.title;
+  if (artistEl) artistEl.textContent = song.artist;
+
+  if (audioPlayer) {
+    const wasPlaying = isAudioPlaying;
+    audioPlayer.src = song.src;
+    if (wasPlaying) {
+      audioPlayer.play().catch(err => console.log("Playback start:", err));
+    }
+  }
+
+  sessionStorage.setItem('wedding_song_idx', currentSongIdx);
 }
 
-/* ── Play / Pause ──────────────────────────────────────── */
 function togglePlay() {
-  if (!ytReady || !ytPlayer) return;
-
-  if (isPlaying) {
-    ytPlayer.pauseVideo();
+  initAudio();
+  if (isAudioPlaying) {
+    audioPlayer.pause();
   } else {
-    ytPlayer.playVideo();
+    audioPlayer.play().then(() => {
+      isAudioPlaying = true;
+      setPlayerVisuals(true);
+    }).catch(err => {
+      console.log("Audio playback notice:", err);
+      isAudioPlaying = true;
+      setPlayerVisuals(true);
+    });
   }
 }
 
-/* ── Navigation ────────────────────────────────────────── */
 function nextSong() {
-  currentIdx = (currentIdx + 1) % PLAYLIST.length;
-  loadAndPlay();
+  initAudio();
+  currentSongIdx = (currentSongIdx + 1) % PLAYLIST.length;
+  updateSongInfo();
+  if (isAudioPlaying) {
+    audioPlayer.play().catch(() => {});
+  }
 }
 
 function prevSong() {
-  currentIdx = (currentIdx - 1 + PLAYLIST.length) % PLAYLIST.length;
-  loadAndPlay();
-}
-
-function loadAndPlay() {
-  if (!ytReady || !ytPlayer) return;
-  updateSongDisplay();
-  ytPlayer.loadVideoById(PLAYLIST[currentIdx].videoId);
-  // loadVideoById auto-plays
-}
-
-/* ── UI helpers ────────────────────────────────────────── */
-function updateSongDisplay() {
-  const song = PLAYLIST[currentIdx];
-  const titleEl  = document.getElementById('song-title');
-  const artistEl = document.getElementById('song-artist');
-  if (titleEl)  titleEl.textContent  = song.title;
-  if (artistEl) artistEl.textContent = song.artist;
-}
-
-function setPlayIcon(playing) {
-  const btn = document.getElementById('play-pause-btn');
-  if (!btn) return;
-  btn.innerHTML = playing
-    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>`
-    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-}
-
-function togglePlayer() {
-  playerCollapsed = !playerCollapsed;
-  const body = document.getElementById('player-body');
-  const btn  = document.getElementById('player-toggle');
-  if (!body) return;
-
-  if (playerCollapsed) {
-    body.style.display = 'none';
-    btn.textContent    = '▲';
-    btn.title          = 'expand player';
-  } else {
-    body.style.display = '';
-    btn.textContent    = '▼';
-    btn.title          = 'collapse player';
+  initAudio();
+  currentSongIdx = (currentSongIdx - 1 + PLAYLIST.length) % PLAYLIST.length;
+  updateSongInfo();
+  if (isAudioPlaying) {
+    audioPlayer.play().catch(() => {});
   }
 }
 
-/* ── Clicking the vinyl disc also toggles play ─────────── */
-window.addEventListener('DOMContentLoaded', () => {
+function setPlayerVisuals(playing) {
   const disc = document.getElementById('vinyl-disc');
-  if (disc) disc.addEventListener('click', togglePlay);
-  updateSongDisplay();
+  const arm = document.getElementById('turntable-arm');
+  const playBtn = document.getElementById('play-pause-btn');
+
+  if (disc) {
+    if (playing) disc.classList.add('spinning');
+    else disc.classList.remove('spinning');
+  }
+
+  if (arm) {
+    if (playing) arm.classList.add('playing');
+    else arm.classList.remove('playing');
+  }
+
+  if (playBtn) {
+    playBtn.innerHTML = playing
+      ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+      : `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  }
+}
+
+function togglePlayerCollapse() {
+  const player = document.getElementById('vinyl-player');
+  const toggleBtn = document.getElementById('player-toggle');
+  if (!player) return;
+
+  player.classList.toggle('collapsed');
+  if (toggleBtn) {
+    toggleBtn.textContent = player.classList.contains('collapsed') ? '▲' : '▼';
+  }
+}
+
+// Global exposure
+window.togglePlay = togglePlay;
+window.nextSong = nextSong;
+window.prevSong = prevSong;
+window.togglePlayerCollapse = togglePlayerCollapse;
+
+window.addEventListener('DOMContentLoaded', () => {
+  initAudio();
+  updateSongInfo();
+
+  const disc = document.getElementById('vinyl-disc');
+  if (disc) {
+    disc.addEventListener('click', togglePlay);
+  }
 });
