@@ -21,6 +21,21 @@ let lastBlowTime     = 0;
 let micStartTime     = 0;
 let blowCooldown     = false;
 
+/* ── Page Entrance (Fade out veil) ────────────────────────── */
+function dismissVeil() {
+  const veil = document.getElementById('page-veil');
+  if (veil) {
+    veil.style.opacity = '0';
+    setTimeout(() => { veil.style.pointerEvents = 'none'; }, 800);
+  }
+}
+window.addEventListener('load', dismissVeil);
+document.addEventListener('DOMContentLoaded', dismissVeil);
+// Fallback in case load already fired
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(dismissVeil, 50);
+}
+
 const sarcasticLines = [
   "bestie... that was barely a breath.",
   "the flame literally grew stronger. iconic.",
