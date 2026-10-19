@@ -62,6 +62,14 @@ function startJourney() {
   if (typeof togglePlay === 'function' && typeof isAudioPlaying !== 'undefined' && !isAudioPlaying) {
     togglePlay();
   }
+
+  // On mobile screens, auto-collapse the player so the bee trail and story are fully clear
+  const player = document.getElementById('vinyl-player');
+  if (player && window.innerWidth <= 768) {
+    player.classList.add('collapsed');
+    const toggleBtn = document.getElementById('player-toggle');
+    if (toggleBtn) toggleBtn.textContent = '▲';
+  }
 }
 window.startJourney = startJourney;
 
@@ -135,6 +143,16 @@ function onScroll() {
   if (maxScroll <= 0) return;
 
   const pct = Math.min(Math.max(wrap.scrollLeft / maxScroll, 0), 1);
+
+  // On mobile view, collapse open player when user scrolls through the journey
+  if (window.innerWidth <= 768 && wrap.scrollLeft > 20) {
+    const player = document.getElementById('vinyl-player');
+    if (player && !player.classList.contains('collapsed')) {
+      player.classList.add('collapsed');
+      const toggleBtn = document.getElementById('player-toggle');
+      if (toggleBtn) toggleBtn.textContent = '▲';
+    }
+  }
 
   placeBee(pct);
 

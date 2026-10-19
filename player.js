@@ -63,9 +63,11 @@ function updateSongInfo() {
   const song = PLAYLIST[currentSongIdx];
   const titleEl = document.getElementById('song-title');
   const artistEl = document.getElementById('song-artist');
+  const miniTitleEl = document.getElementById('mini-song-title');
 
   if (titleEl) titleEl.textContent = song.title;
   if (artistEl) artistEl.textContent = song.artist;
+  if (miniTitleEl) miniTitleEl.textContent = song.title;
 
   if (audioPlayer) {
     const wasPlaying = isAudioPlaying;
@@ -114,12 +116,18 @@ function prevSong() {
 
 function setPlayerVisuals(playing) {
   const disc = document.getElementById('vinyl-disc');
+  const miniDisc = document.getElementById('mini-vinyl');
   const arm = document.getElementById('turntable-arm');
   const playBtn = document.getElementById('play-pause-btn');
 
   if (disc) {
     if (playing) disc.classList.add('spinning');
     else disc.classList.remove('spinning');
+  }
+
+  if (miniDisc) {
+    if (playing) miniDisc.classList.add('spinning');
+    else miniDisc.classList.remove('spinning');
   }
 
   if (arm) {
@@ -158,5 +166,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const disc = document.getElementById('vinyl-disc');
   if (disc) {
     disc.addEventListener('click', togglePlay);
+  }
+
+  // Auto-collapse on mobile view so the player never obscures content or trail
+  const player = document.getElementById('vinyl-player');
+  if (player && window.innerWidth <= 768) {
+    player.classList.add('collapsed');
+    const toggleBtn = document.getElementById('player-toggle');
+    if (toggleBtn) toggleBtn.textContent = '▲';
   }
 });

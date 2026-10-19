@@ -289,14 +289,28 @@ body {
   font-family: var(--ff-hand);
   font-size: 0.95rem; font-weight: 700;
   letter-spacing: 0.18em; color: var(--muted);
-  text-transform: uppercase; margin-bottom: 0.4rem;
+  text-transform: uppercase; margin-bottom: 0.8rem;
+  position: relative; z-index: 10;
+}
+#stop-1 .stop-label {
+  margin-bottom: 1.8rem;
+  position: relative;
+  z-index: 10;
 }
 .stop-note {
   font-family: var(--ff-hand);
   font-size: 1.25rem; color: var(--dark);
-  margin-top: 0.75rem; text-align: center;
+  margin-top: 1rem; text-align: center;
   max-width: 290px; line-height: 1.45;
   font-weight: 600;
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(255, 180, 200, 0.2);
 }
 
 /* ── Polaroids ───────────────────────────────────────────── */
@@ -423,7 +437,7 @@ body {
   opacity: 0.9;
 }
 .horizontal-egg-stage.cracked .egg-picture-card {
-  transform: scale(1.08) translateY(-14px);
+  transform: scale(1.04) translateY(-6px);
   box-shadow: 0 16px 36px rgba(255, 180, 50, 0.28);
   opacity: 1;
 }
@@ -715,24 +729,79 @@ body {
 }
 
 /* ── Turntable & Vinyl Player ────────────────────────────── */
+/* ── Turntable & Vinyl Player ────────────────────────────── */
 #vinyl-player {
   position: fixed; bottom: 1.5rem; right: 1.5rem;
   width: 210px; background: var(--lavender);
   border-radius: 20px; padding: 1rem; z-index: 500;
   box-shadow: 0 6px 0 rgba(150,110,220,0.35), var(--shadow-card);
-  transition: transform 0.3s ease, height 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1),
+              width 0.3s ease, height 0.3s ease, padding 0.3s ease,
+              border-radius 0.3s ease, box-shadow 0.3s ease;
 }
-#vinyl-player:hover { transform: translateY(-3px); }
-#vinyl-player.collapsed { transform: translateY(calc(100% - 38px)); }
+#vinyl-player:hover { transform: translateY(-2px); }
+
+/* Mini player bar (visible only when player is collapsed) */
+.mini-player-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+}
+.mini-vinyl-disc {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: radial-gradient(circle at center, #ffd060 20%, #2d2728 22%, #3a3a3a 50%, #2d2728 100%);
+  position: relative; flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  animation: vspin 3.5s linear infinite paused;
+}
+.mini-vinyl-disc.spinning { animation-play-state: running; }
+.mini-vinyl-center {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px; height: 7px; border-radius: 50%; background: #2d2728;
+}
+.mini-player-info {
+  flex: 1; overflow: hidden; white-space: nowrap; text-align: left;
+}
+#mini-song-title {
+  font-family: var(--ff-hand); font-size: 0.95rem; font-weight: 700;
+  color: var(--dark); display: block; overflow: hidden; text-overflow: ellipsis;
+}
+.mini-toggle-icon {
+  font-size: 0.65rem; color: var(--dark); background: var(--pink);
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: 0 2px 4px rgba(200,100,130,0.3);
+}
+
+/* Collapsed state */
+#vinyl-player.collapsed {
+  width: auto;
+  min-width: 135px;
+  max-width: 170px;
+  padding: 6px 14px;
+  height: 40px;
+  border-radius: 22px;
+  cursor: pointer;
+  transform: none;
+}
+#vinyl-player.collapsed #player-body { display: none; }
+#vinyl-player.collapsed #player-toggle { display: none; }
+#vinyl-player.collapsed .mini-player-bar { display: flex; }
 
 #player-toggle {
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  width: 26px; height: 26px; border-radius: 50%;
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  width: 28px; height: 28px; border-radius: 50%;
   background: var(--pink); border: none; cursor: pointer;
-  font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
   box-shadow: 0 3px 0 rgba(200,100,130,0.3); color: var(--dark);
   transition: all 0.2s;
 }
+#player-toggle:hover { transform: translateX(-50%) scale(1.1); }
 
 .turntable-deck {
   position: relative; width: 100%; height: 110px;
@@ -858,3 +927,118 @@ body {
   transition: opacity 0.3s ease; cursor: default;
 }
 .creator-credit:hover { opacity: 0.85; }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE & TOUCH SCREEN OPTIMIZATIONS (<= 768px)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Chapter 1: Yellow Egg & Text clearance */
+  #stop-1 {
+    top: calc(50% - 250px) !important;
+  }
+  #stop-1 .stop-label {
+    margin-bottom: 1.8rem !important;
+    font-size: 1.05rem;
+    position: relative;
+    z-index: 12;
+  }
+  .horizontal-egg-stage {
+    width: 250px;
+    height: 195px;
+  }
+  .egg-picture-card img {
+    width: 155px;
+    height: 155px;
+  }
+  .horizontal-egg-stage.cracked .egg-shell-left {
+    transform: translateX(-70px) rotate(-10deg);
+  }
+  .horizontal-egg-stage.cracked .egg-shell-right {
+    transform: translateX(70px) rotate(10deg);
+  }
+  .horizontal-egg-stage.cracked .egg-picture-card {
+    transform: scale(1.03) translateY(-4px);
+  }
+  .stop-note {
+    font-size: 1.15rem;
+    max-width: 270px;
+  }
+
+  /* Chapter 2 & Chapter 4: Lifted up so they are not at the bottom edge */
+  #stop-2, #stop-4 {
+    top: calc(50% - 90px) !important;
+  }
+  #stop-2 .video-frame {
+    width: 230px;
+    height: 150px;
+  }
+
+  /* Vinyl Player: Sleek non-intrusive mobile positioning */
+  #vinyl-player {
+    bottom: 0.8rem;
+    right: 0.8rem;
+    width: 180px;
+    padding: 0.75rem;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(150,110,220,0.35);
+  }
+  #vinyl-player.collapsed {
+    width: auto;
+    min-width: 130px;
+    max-width: 155px;
+    padding: 6px 12px;
+    height: 38px;
+  }
+
+  .turntable-deck {
+    height: 85px;
+    margin-bottom: 0.35rem;
+  }
+  #vinyl-disc {
+    width: 74px;
+    height: 74px;
+  }
+  .vinyl-label {
+    width: 26px;
+    height: 26px;
+  }
+  #turntable-arm {
+    height: 58px;
+    right: 14px;
+    top: 6px;
+  }
+  #song-title {
+    font-size: 0.95rem;
+  }
+  #song-artist {
+    font-size: 0.6rem;
+  }
+  .player-controls button {
+    padding: 6px;
+  }
+  #play-pause-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .player-click-hint {
+    font-size: 0.58rem;
+    margin-top: 0.2rem;
+  }
+
+  /* Chapter Dots - positioned nicely so they never collide with player */
+  #chapter-dots {
+    bottom: 1rem;
+    gap: 7px;
+  }
+  .ch-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Scroll Hint: keep subtle on mobile */
+  #scroll-hint {
+    font-size: 1.8rem;
+    right: 0.8rem;
+  }
+}
+
