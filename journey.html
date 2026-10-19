@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asma's Story</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- Page veil for smooth entrance -->
@@ -24,15 +28,15 @@
     <!-- Whimsical SVG Bumblebee mascot -->
     <div style="width:90px;height:75px;margin-bottom:0.5rem;">
       <svg width="100%" height="100%" viewBox="0 0 40 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.8" transform="rotate(-25 14 9)"/>
-        <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.8" transform="rotate(15 23 8)"/>
-        <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060"/>
-        <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
-        <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="28" cy="18" r="2" fill="#2d2728"/>
-        <circle cx="26" cy="22" r="2.5" fill="#ffb3d4"/>
-        <polygon points="5,20 2,18 2,22" fill="#2d2728"/>
-        <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.8" transform="rotate(-25 14 9)" />
+        <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.8" transform="rotate(15 23 8)" />
+        <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060" />
+        <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round" />
+        <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round" />
+        <circle cx="28" cy="18" r="2" fill="#2d2728" />
+        <circle cx="26" cy="22" r="2.5" fill="#ffb3d4" />
+        <polygon points="5,20 2,18 2,22" fill="#2d2728" />
+        <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round" />
       </svg>
     </div>
     <h1>follow the bee</h1>
@@ -64,7 +68,7 @@
         <div id="vinyl-disc">
           <div class="vinyl-label">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#2d2728">
-              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
             </svg>
           </div>
         </div>
@@ -78,13 +82,19 @@
 
       <div class="player-controls">
         <button onclick="prevSong()" aria-label="Previous">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
+          </svg>
         </button>
         <button id="play-pause-btn" onclick="togglePlay()" aria-label="Play/Pause">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
         </button>
         <button onclick="nextSong()" aria-label="Next">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 4V6l-5.5 4z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 4V6l-5.5 4z" />
+          </svg>
         </button>
       </div>
       <p class="player-click-hint" id="player-hint">click play or the vinyl</p>
@@ -94,10 +104,12 @@
   <!-- ════════ VIDEO MODAL (Pauses background music when opened) ════════ -->
   <div id="video-modal">
     <div class="video-modal-card">
-      <h3 style="font-family:'Pacifico',cursive;font-size:1.4rem;color:#2d2728;margin-bottom:0.5rem;">gol gappay session</h3>
+      <h3 style="font-family:'Pacifico',cursive;font-size:1.4rem;color:#2d2728;margin-bottom:0.5rem;">gol gappay session
+      </h3>
       <div style="position:relative;background:#000;border-radius:8px;overflow:hidden;">
         <!-- Embedded player placeholder or video clip -->
-        <video id="chapter-video-player" controls style="width:100%;height:280px;display:block;" poster="assets/images/video_placeholder.png">
+        <video id="chapter-video-player" controls style="width:100%;height:280px;display:block;"
+          poster="assets/images/video_placeholder.png">
           <source src="" type="video/mp4">
           your browser does not support HTML video.
         </video>
@@ -115,7 +127,11 @@
       <button id="close-letter" onclick="closeLetter()">close [✕]</button>
       <div class="letter-from">to Asma, from Tehrim</div>
       <div class="letter-body">
-You are the reason that I finally talked about my emotions and stop suppressing them. You got me into Attack on Titan, Genshin Impact and now I enjoy these soft little playful moments with you. You showed me the love that Cardan has for Jude through books. And I'm really happy that you were as my family. I really really love you and I hope that Sikhandar also loves you. I wish you the best of love janiii.... and may we continue playing together tehe ..... YOU BETTER CRY BITCH.
+        You are the reason that I finally talked about my emotions and stop suppressing them. You got me into Attack on
+        Titan, Genshin Impact and now I enjoy these soft little playful moments with you. You showed me the love that
+        Cardan has for Jude through books. And I'm really happy that you were as my family. I really really love you and
+        I hope that Sikhandar also loves you. I wish you the best of love janiii.... and may we continue playing
+        together tehe ..... YOU BETTER CRY BITCH.
       </div>
       <div class="letter-sig">— Tehrim</div>
     </div>
@@ -136,32 +152,32 @@ You are the reason that I finally talked about my emotions and stop suppressing 
       <!-- Whimsical Pastel Floating Clouds -->
       <div class="whimsical-cloud" style="left:380px;top:14%;">
         <svg width="120" height="60" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
       <div class="whimsical-cloud" style="left:1220px;top:72%;">
         <svg width="140" height="70" viewBox="0 0 120 60" fill="#ffffff" opacity="0.82">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
       <div class="whimsical-cloud" style="left:1900px;top:12%;">
         <svg width="110" height="55" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
       <div class="whimsical-cloud" style="left:2750px;top:75%;">
         <svg width="130" height="65" viewBox="0 0 120 60" fill="#ffffff" opacity="0.84">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
       <div class="whimsical-cloud" style="left:3500px;top:15%;">
         <svg width="125" height="62" viewBox="0 0 120 60" fill="#ffffff" opacity="0.85">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
       <div class="whimsical-cloud" style="left:4250px;top:70%;">
         <svg width="135" height="68" viewBox="0 0 120 60" fill="#ffffff" opacity="0.83">
-          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z"/>
+          <path d="M20 45 A15 15 0 0 1 35 25 A22 22 0 0 1 70 18 A20 20 0 0 1 100 30 A15 15 0 0 1 95 45 Z" />
         </svg>
       </div>
 
@@ -176,15 +192,15 @@ You are the reason that I finally talked about my emotions and stop suppressing 
       <!-- Whimsical SVG Bumblebee flying along the trail -->
       <div id="bee">
         <svg width="42" height="36" viewBox="0 0 40 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.85" transform="rotate(-25 14 9)"/>
-          <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.85" transform="rotate(15 23 8)"/>
-          <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060"/>
-          <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
-          <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="28" cy="18" r="2" fill="#2d2728"/>
-          <circle cx="26" cy="22" r="2.5" fill="#ffb3d4"/>
-          <polygon points="5,20 2,18 2,22" fill="#2d2728"/>
-          <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round"/>
+          <ellipse cx="14" cy="9" rx="8" ry="12" fill="#d4f1f9" opacity="0.85" transform="rotate(-25 14 9)" />
+          <ellipse cx="23" cy="8" rx="8" ry="11" fill="#e8f8fc" opacity="0.85" transform="rotate(15 23 8)" />
+          <ellipse cx="20" cy="20" rx="15" ry="11" fill="#ffd060" />
+          <path d="M15 10 C17 14, 17 26, 15 30" stroke="#2d2728" stroke-width="3" stroke-linecap="round" />
+          <path d="M21 9 C23 14, 23 26, 21 31" stroke="#2d2728" stroke-width="3" stroke-linecap="round" />
+          <circle cx="28" cy="18" r="2" fill="#2d2728" />
+          <circle cx="26" cy="22" r="2.5" fill="#ffb3d4" />
+          <polygon points="5,20 2,18 2,22" fill="#2d2728" />
+          <path d="M27 12 C28 8, 32 7, 34 8" stroke="#2d2728" stroke-width="1.5" stroke-linecap="round" />
         </svg>
       </div>
 
@@ -211,7 +227,7 @@ You are the reason that I finally talked about my emotions and stop suppressing 
       </div>
 
       <!-- ════════ CHAPTER 1 — HORIZONTAL YELLOW EGG CRACKING ════════ -->
-      <div class="photo-stop" id="stop-1" style="left:720px;top:calc(50% - 225px);">
+      <div class="photo-stop" id="stop-1" style="left:720px;top:calc(50% - 235px);">
         <span class="stop-label">chapter one</span>
         <div class="horizontal-egg-stage tape-yellow" id="egg-card" onclick="toggleEggCrack()">
           <!-- Seamless intact yellow egg shell (ZERO cracks before cracking!) -->
@@ -234,17 +250,19 @@ You are the reason that I finally talked about my emotions and stop suppressing 
           <!-- Gol Gappay theme badge -->
           <div class="theme-badge" title="gol gappay">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d2728" stroke-width="2">
-              <path d="M3 12h18c0 5-4 9-9 9s-9-4-9-9z" fill="#ffe699"/>
-              <circle cx="8" cy="11" r="3" fill="#ffcba8"/>
-              <circle cx="14" cy="10" r="3.2" fill="#ffd060"/>
-              <circle cx="11" cy="7" r="2.8" fill="#ffd6e8"/>
+              <path d="M3 12h18c0 5-4 9-9 9s-9-4-9-9z" fill="#ffe699" />
+              <circle cx="8" cy="11" r="3" fill="#ffcba8" />
+              <circle cx="14" cy="10" r="3.2" fill="#ffd060" />
+              <circle cx="11" cy="7" r="2.8" fill="#ffd6e8" />
             </svg>
           </div>
           <div class="video-frame" onclick="openChapterVideo()">
             <img src="assets/images/video_placeholder.png" alt="video placeholder" />
             <div class="video-play-overlay">
               <div class="play-triangle">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
               </div>
             </div>
           </div>
@@ -259,18 +277,19 @@ You are the reason that I finally talked about my emotions and stop suppressing 
           <!-- Flying Golden Snitch SVG badge -->
           <div class="hp-snitch" title="golden snitch">
             <svg width="44" height="32" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="22" cy="18" r="6.5" fill="#f5b820" stroke="#d3a625" stroke-width="1.5"/>
-              <path d="M16 16 C10 12, 3 8, 2 3 C9 5, 14 10, 16 16 Z" fill="#fff9c4" stroke="#d3a625" stroke-width="1"/>
-              <path d="M28 16 C34 12, 41 8, 42 3 C35 5, 30 10, 28 16 Z" fill="#fff9c4" stroke="#d3a625" stroke-width="1"/>
+              <circle cx="22" cy="18" r="6.5" fill="#f5b820" stroke="#d3a625" stroke-width="1.5" />
+              <path d="M16 16 C10 12, 3 8, 2 3 C9 5, 14 10, 16 16 Z" fill="#fff9c4" stroke="#d3a625" stroke-width="1" />
+              <path d="M28 16 C34 12, 41 8, 42 3 C35 5, 30 10, 28 16 Z" fill="#fff9c4" stroke="#d3a625"
+                stroke-width="1" />
             </svg>
           </div>
           <!-- Harry Potter Glasses & Lightning bolt badge -->
           <div class="theme-badge" style="border-color:#d3a625;" title="harry potter">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d2728" stroke-width="1.8">
-              <circle cx="7" cy="13" r="4.5"/>
-              <circle cx="17" cy="13" r="4.5"/>
-              <path d="M11.5 13h1"/>
-              <path d="M11 5 L9 8 L12 8 L10 12" stroke="#d3a625" stroke-width="2" fill="none"/>
+              <circle cx="7" cy="13" r="4.5" />
+              <circle cx="17" cy="13" r="4.5" />
+              <path d="M11.5 13h1" />
+              <path d="M11 5 L9 8 L12 8 L10 12" stroke="#d3a625" stroke-width="2" fill="none" />
             </svg>
           </div>
           <img src="assets/images/harrypotter_placeholder.png" alt="Harry Potter marathon" />
@@ -285,8 +304,9 @@ You are the reason that I finally talked about my emotions and stop suppressing 
           <!-- Glowing Primogem SVG badge -->
           <div class="primogem-deco" title="primogem">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <polygon points="18,3 23,13 33,18 23,23 18,33 13,23 3,18 13,13" fill="#80c5ff" stroke="#fff" stroke-width="1.5"/>
-              <polygon points="18,7 21,14 28,18 21,22 18,29 15,22 8,18 15,14" fill="#ffb3d4"/>
+              <polygon points="18,3 23,13 33,18 23,23 18,33 13,23 3,18 13,13" fill="#80c5ff" stroke="#fff"
+                stroke-width="1.5" />
+              <polygon points="18,7 21,14 28,18 21,22 18,29 15,22 8,18 15,14" fill="#ffb3d4" />
             </svg>
           </div>
           <img src="assets/images/genshin_placeholder.png" alt="Genshin Impact" />
@@ -300,20 +320,20 @@ You are the reason that I finally talked about my emotions and stop suppressing 
         <div class="carousel-card tape-spidey spiderman-theme-card" style="transform:rotate(-2deg);">
           <!-- Spiderweb corner overlays -->
           <svg class="spidey-web-tl" viewBox="0 0 50 50" fill="none" stroke="#ff6b81" stroke-width="1.2">
-            <path d="M0 10 Q25 25 10 0 M0 25 Q35 35 25 0 M0 42 Q45 45 42 0"/>
-            <path d="M0 0 L50 50 M0 0 L25 50 M0 0 L50 25"/>
+            <path d="M0 10 Q25 25 10 0 M0 25 Q35 35 25 0 M0 42 Q45 45 42 0" />
+            <path d="M0 0 L50 50 M0 0 L25 50 M0 0 L50 25" />
           </svg>
           <svg class="spidey-web-br" viewBox="0 0 50 50" fill="none" stroke="#4a90e2" stroke-width="1.2">
-            <path d="M50 40 Q25 25 40 50 M50 25 Q15 15 25 50 M50 8 Q5 5 8 50"/>
-            <path d="M50 50 L0 0 M50 50 L25 0 M50 50 L0 25"/>
+            <path d="M50 40 Q25 25 40 50 M50 25 Q15 15 25 50 M50 8 Q5 5 8 50" />
+            <path d="M50 50 L0 0 M50 50 L25 0 M50 50 L0 25" />
           </svg>
           <!-- Spider-Man mask badge -->
           <div class="spidey-mask-badge" title="spiderman">
             <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-              <ellipse cx="17" cy="17" rx="14" ry="16" fill="#ff6b81"/>
-              <path d="M10 13 Q14 11 16 17 Q12 18 10 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2"/>
-              <path d="M24 13 Q20 11 18 17 Q22 18 24 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2"/>
-              <path d="M17 3 L17 31 M3 17 L31 17" stroke="#2d2728" stroke-width="0.8" opacity="0.4"/>
+              <ellipse cx="17" cy="17" rx="14" ry="16" fill="#ff6b81" />
+              <path d="M10 13 Q14 11 16 17 Q12 18 10 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2" />
+              <path d="M24 13 Q20 11 18 17 Q22 18 24 13 Z" fill="#fff" stroke="#2d2728" stroke-width="1.2" />
+              <path d="M17 3 L17 31 M3 17 L31 17" stroke="#2d2728" stroke-width="0.8" opacity="0.4" />
             </svg>
           </div>
 
@@ -341,9 +361,9 @@ You are the reason that I finally talked about my emotions and stop suppressing 
           <!-- Wedding Rings SVG Badge -->
           <div class="wedding-rings-badge" title="nikkah wedding rings">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="14" cy="18" r="9" stroke="#f5b820" stroke-width="2.5" fill="none"/>
-              <circle cx="22" cy="18" r="9" stroke="#ffd060" stroke-width="2.5" fill="none"/>
-              <polygon points="14,9 12,6 16,6" fill="#fff" stroke="#f5b820" stroke-width="1"/>
+              <circle cx="14" cy="18" r="9" stroke="#f5b820" stroke-width="2.5" fill="none" />
+              <circle cx="22" cy="18" r="9" stroke="#ffd060" stroke-width="2.5" fill="none" />
+              <polygon points="14,9 12,6 16,6" fill="#fff" stroke="#f5b820" stroke-width="1" />
             </svg>
           </div>
           <img src="assets/images/sikhandar_placeholder.png" alt="Sikhandar and Asma" />
@@ -363,4 +383,5 @@ You are the reason that I finally talked about my emotions and stop suppressing 
   <script src="player.js"></script>
   <script src="journey.js"></script>
 </body>
+
 </html>
