@@ -85,6 +85,7 @@ updateCountdown();
 const noBtn      = document.getElementById('no-btn');
 const noCounter  = document.getElementById('no-counter');
 const noCountEl  = document.getElementById('no-count');
+let noMoved      = false;
 
 function moveNo() {
   if (!noBtn) return;
@@ -95,6 +96,41 @@ function moveNo() {
   const maxY = window.innerHeight - h - margin;
   const x = margin + Math.random() * Math.max(0, maxX - margin);
   const y = margin + Math.random() * Math.max(0, maxY - margin);
+
+  if (!noMoved) {
+    const rect = noBtn.getBoundingClientRect();
+    // Create an invisible placeholder to keep the row layout stable and smoothly center the YES button
+    const placeholder = document.createElement('div');
+    placeholder.id = 'no-btn-placeholder';
+    placeholder.style.width = rect.width + 'px';
+    placeholder.style.height = rect.height + 'px';
+    placeholder.style.flexShrink = '0';
+    placeholder.style.transition = 'width 0.4s ease, margin 0.4s ease';
+    noBtn.parentNode.insertBefore(placeholder, noBtn);
+
+    // Switch to fixed coordinates matching current exact visual position
+    noBtn.style.transition = 'none';
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = rect.left + 'px';
+    noBtn.style.top  = rect.top + 'px';
+    noBtn.style.margin = '0';
+    noBtn.style.zIndex = '99';
+    void noBtn.offsetWidth; // Force layout reflow
+
+    // Re-enable smooth transition
+    noBtn.style.transition = 'left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.25s ease';
+    noMoved = true;
+
+    // Gently collapse placeholder so YES button smoothly centers
+    requestAnimationFrame(() => {
+      placeholder.style.width = '0px';
+    });
+    setTimeout(() => {
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+    }, 450);
+  }
 
   noBtn.style.left = x + 'px';
   noBtn.style.top  = y + 'px';
