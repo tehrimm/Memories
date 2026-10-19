@@ -1,20 +1,20 @@
-# Asma's Love Letter 💌
+# Love Letter 💌
 
 > *A visual journey — written by fate, for Asma — on the eve of October 23rd, 2026.*
 
 A whimsical, vintage, interactive website gifted to Asma on her Nikkah. Features:
 
-- 🕯️ **Candle-blow landing** — blow out 3 candles using your mic (Web Audio API)
-- 📸 **Photo journey** — 6 chapters from baby to Nikkah day with Polaroid-style photos
-- 🎵 **Vinyl record player** — BTS & AOT songs via YouTube IFrame API
-- ⏳ **Live countdown** to October 23rd
-- 🌸 **Rose petal animations** and vintage grain aesthetic
+-  **Candle-blow landing** — blow out 3 candles using your mic (Web Audio API)
+-  **Photo journey** — 6 chapters from baby to Nikkah day with Polaroid-style photos
+-  **Vinyl record player** — BTS & AOT songs via Spotify IFrame API
+-  **Live countdown** to October 23rd
+-  **Rose petal animations** and vintage grain aesthetic
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
-Since the YouTube player requires an HTTP server (not `file://`), run a local server:
+Since the Spotify player requires an HTTP server (not `file://`), run a local server:
 
 ```bash
 # Option 1: Python (if installed)
@@ -27,15 +27,15 @@ npx live-server
 
 ---
 
-## 🌐 Deploy to GitHub Pages (Free Hosting)
+##  Deploy to GitHub Pages (Free Hosting)
 
-1. Create a new repo on GitHub (e.g. `asma-love-letter`)
+1. Create a new repo on GitHub (e.g. `love-letter`)
 2. In this folder, run:
 
 ```bash
 git init
 git add .
-git commit -m "💌 initial commit — asma's love letter"
+git commit -m  initial commit — love letter"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/asma-love-letter.git
 git push -u origin main
@@ -46,7 +46,7 @@ git push -u origin main
 
 ---
 
-## 🎵 Updating Songs
+## Updating Songs
 
 Open `player.js` and edit the `PLAYLIST` array. Each song needs:
 - `title` — displayed on the player
@@ -55,7 +55,7 @@ Open `player.js` and edit the `PLAYLIST` array. Each song needs:
 
 ---
 
-## 📸 Adding Real Photos
+##  Adding Real Photos
 
 Replace the images in `assets/images/` with Asma's actual photos:
 - `photo_roses.png` → Chapter 1 (baby photo)
