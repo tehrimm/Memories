@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,48 +9,75 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@400;500;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 
   <style>
     /* ── SECTION WRAPPER ─────────────────────────── */
     .section {
-      position: fixed; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 2rem;
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
+
     .section.hidden {
-      opacity: 0; pointer-events: none;
+      opacity: 0;
+      pointer-events: none;
       transform: translateY(-30px);
     }
 
     /* ══════════════════════════════════════════════
        SECTION 1 — YES / NO
     ══════════════════════════════════════════════ */
-    #section-yesno { z-index: 10; }
+    #section-yesno {
+      z-index: 10;
+    }
 
     /* Stars scattered around */
     .star-deco {
-      position: fixed; font-size: 1.2rem; pointer-events: none; z-index: 1;
+      position: fixed;
+      font-size: 1.2rem;
+      pointer-events: none;
+      z-index: 1;
       animation: star-float 4s ease-in-out infinite alternate;
     }
+
     @keyframes star-float {
-      from { transform: translateY(0) rotate(0deg); }
-      to   { transform: translateY(-12px) rotate(15deg); }
+      from {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      to {
+        transform: translateY(-12px) rotate(15deg);
+      }
     }
 
     /* character / mascot */
     .mascot {
-      width: 90px; height: 90px;
+      width: 90px;
+      height: 90px;
       animation: mascot-bounce 2s ease-in-out infinite;
-      filter: drop-shadow(0 6px 12px rgba(255,179,212,0.4));
+      filter: drop-shadow(0 6px 12px rgba(255, 179, 212, 0.4));
       margin-bottom: 0.8rem;
     }
+
     @keyframes mascot-bounce {
-      0%, 100% { transform: translateY(0) rotate(-4deg); }
-      50%       { transform: translateY(-12px) rotate(4deg); }
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-4deg);
+      }
+
+      50% {
+        transform: translateY(-12px) rotate(4deg);
+      }
     }
 
     .greeting-title {
@@ -59,7 +87,8 @@
       text-align: center;
       line-height: 1.4;
       margin-bottom: 0.5rem;
-      position: relative; z-index: 2;
+      position: relative;
+      z-index: 2;
     }
 
     .greeting-sub {
@@ -68,12 +97,17 @@
       color: var(--muted);
       text-align: center;
       margin-bottom: 2rem;
-      position: relative; z-index: 2;
+      position: relative;
+      z-index: 2;
     }
 
     .btn-row {
-      display: flex; gap: 1.5rem; align-items: center; justify-content: center;
-      position: relative; z-index: 2;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
     }
 
     /* YES button */
@@ -82,17 +116,30 @@
       color: var(--dark);
       font-size: clamp(1.1rem, 3vw, 1.5rem);
       padding: 1rem 2.8rem;
-      box-shadow: 0 6px 0 rgba(100,200,160,0.4);
+      box-shadow: 0 6px 0 rgba(100, 200, 160, 0.4);
       animation: yes-wiggle 3s ease-in-out infinite;
     }
+
     #yes-btn:hover {
       background: #8fe8c4;
-      box-shadow: 0 8px 0 rgba(100,200,160,0.4);
+      box-shadow: 0 8px 0 rgba(100, 200, 160, 0.4);
     }
+
     @keyframes yes-wiggle {
-      0%, 90%, 100% { transform: rotate(0deg); }
-      93%  { transform: rotate(-4deg); }
-      96%  { transform: rotate(4deg); }
+
+      0%,
+      90%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      93% {
+        transform: rotate(-4deg);
+      }
+
+      96% {
+        transform: rotate(4deg);
+      }
     }
 
     /* NO button — runs away! */
@@ -101,134 +148,274 @@
       color: var(--muted);
       font-size: clamp(0.85rem, 2vw, 1rem);
       padding: 0.7rem 1.8rem;
-      box-shadow: 0 4px 0 rgba(200,140,100,0.3);
-      position: relative;
+      box-shadow: 0 4px 0 rgba(200, 140, 100, 0.3);
+      position: fixed;
       transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  top  0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        top 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
     }
 
     /* Try counter */
     #no-counter {
-      position: fixed; bottom: 1.5rem; right: 1.5rem;
-      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
-      opacity: 0; transition: opacity 0.3s ease; z-index: 100;
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      font-family: var(--ff-hand);
+      font-size: 0.95rem;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 100;
     }
-    #no-counter.show { opacity: 1; }
+
+    #no-counter.show {
+      opacity: 1;
+    }
 
     /* ══════════════════════════════════════════════
        SECTION 2 — CANDLES
     ══════════════════════════════════════════════ */
-    #section-candles { z-index: 9; background: var(--white); }
+    #section-candles {
+      z-index: 9;
+      background: var(--white);
+    }
 
     .candle-page-title {
       font-family: var(--ff-fun);
       font-size: clamp(1.4rem, 4vw, 2.2rem);
-      color: var(--dark); text-align: center;
+      color: var(--dark);
+      text-align: center;
       margin-bottom: 0.4rem;
     }
 
     .candle-page-sub {
       font-family: var(--ff-hand);
       font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: var(--muted); text-align: center;
+      color: var(--muted);
+      text-align: center;
       margin-bottom: 2.5rem;
     }
 
     /* Countdown */
-    .countdown-wrap { text-align: center; margin-bottom: 1.5rem; }
+    .countdown-wrap {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
     .cd-label {
-      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
-      letter-spacing: 0.15em; margin-bottom: 0.4rem;
+      font-family: var(--ff-hand);
+      font-size: 0.95rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.4rem;
     }
+
     .cd-timer {
-      display: flex; gap: 0.7rem; align-items: center; justify-content: center;
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+      justify-content: center;
     }
-    .cd-unit { text-align: center; }
+
+    .cd-unit {
+      text-align: center;
+    }
+
     .cd-num {
-      display: block; font-family: var(--ff-fun);
-      font-size: clamp(1.6rem, 4.5vw, 2.5rem); color: var(--coral); line-height: 1;
+      display: block;
+      font-family: var(--ff-fun);
+      font-size: clamp(1.6rem, 4.5vw, 2.5rem);
+      color: var(--coral);
+      line-height: 1;
     }
+
     .cd-lbl {
-      font-size: 0.55rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.2em;
+      font-size: 0.55rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
     }
-    .cd-sep { font-family: var(--ff-fun); font-size: 1.5rem; color: var(--pink); margin-top: -4px; }
+
+    .cd-sep {
+      font-family: var(--ff-fun);
+      font-size: 1.5rem;
+      color: var(--pink);
+      margin-top: -4px;
+    }
 
     /* Candle row */
     .candles-row {
-      display: flex; gap: clamp(1.8rem, 5vw, 3.5rem); align-items: flex-end;
-      position: relative; margin: 0 auto 2rem;
+      display: flex;
+      gap: clamp(1.8rem, 5vw, 3.5rem);
+      align-items: flex-end;
+      position: relative;
+      margin: 0 auto 2rem;
     }
 
     /* Candle sizes & colors */
-    .c1-body { height: 65px; background: linear-gradient(to right, #ffb3d4, #ff8fb8, #ffc4d8); }
-    .c1-holder { background: var(--pink); box-shadow: 0 3px 0 rgba(200,100,130,0.35); }
-    .c1-drip { background: rgba(255,180,210,0.7); right: -3px; top: 8px; }
+    .c1-body {
+      height: 65px;
+      background: linear-gradient(to right, #ffb3d4, #ff8fb8, #ffc4d8);
+    }
 
-    .c2-body { height: 88px; background: linear-gradient(to right, #ffe699, #ffd060, #ffe8a8); }
-    .c2-holder { background: var(--yellow); box-shadow: 0 3px 0 rgba(200,170,60,0.35); }
-    .c2-drip { background: rgba(255,230,130,0.7); left: -3px; top: 12px; }
+    .c1-holder {
+      background: var(--pink);
+      box-shadow: 0 3px 0 rgba(200, 100, 130, 0.35);
+    }
 
-    .c3-body { height: 72px; background: linear-gradient(to right, #d4b8ff, #b890ff, #e0caff); }
-    .c3-holder { background: var(--lavender); box-shadow: 0 3px 0 rgba(140,100,220,0.35); }
+    .c1-drip {
+      background: rgba(255, 180, 210, 0.7);
+      right: -3px;
+      top: 8px;
+    }
+
+    .c2-body {
+      height: 88px;
+      background: linear-gradient(to right, #ffe699, #ffd060, #ffe8a8);
+    }
+
+    .c2-holder {
+      background: var(--yellow);
+      box-shadow: 0 3px 0 rgba(200, 170, 60, 0.35);
+    }
+
+    .c2-drip {
+      background: rgba(255, 230, 130, 0.7);
+      left: -3px;
+      top: 12px;
+    }
+
+    .c3-body {
+      height: 72px;
+      background: linear-gradient(to right, #d4b8ff, #b890ff, #e0caff);
+    }
+
+    .c3-holder {
+      background: var(--lavender);
+      box-shadow: 0 3px 0 rgba(140, 100, 220, 0.35);
+    }
 
     /* Mic button */
-    .mic-section { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+    .mic-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
 
     #mic-btn {
-      background: var(--sky); color: var(--dark); font-family: var(--ff-body);
-      font-weight: 800; font-size: 1rem;
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.85rem 2rem; border: none; border-radius: 50px; cursor: pointer;
-      box-shadow: 0 5px 0 rgba(100,180,240,0.4);
+      background: var(--sky);
+      color: var(--dark);
+      font-family: var(--ff-body);
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 rgba(100, 180, 240, 0.4);
       transition: all 0.2s ease;
     }
-    #mic-btn:hover { background: #7cceff; transform: translateY(-2px); box-shadow: 0 7px 0 rgba(100,180,240,0.4); }
+
+    #mic-btn:hover {
+      background: #7cceff;
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 rgba(100, 180, 240, 0.4);
+    }
+
     #mic-btn.listening {
-      background: var(--coral); color: #fff;
+      background: var(--coral);
+      color: #fff;
       animation: mic-pulse 1.2s ease-in-out infinite;
     }
+
     @keyframes mic-pulse {
-      0%, 100% { box-shadow: 0 5px 0 rgba(255,100,130,0.4), 0 0 0 0 rgba(255,100,130,0.3); }
-      50%       { box-shadow: 0 5px 0 rgba(255,100,130,0.4), 0 0 0 15px rgba(255,100,130,0); }
+
+      0%,
+      100% {
+        box-shadow: 0 5px 0 rgba(255, 100, 130, 0.4), 0 0 0 0 rgba(255, 100, 130, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 5px 0 rgba(255, 100, 130, 0.4), 0 0 0 15px rgba(255, 100, 130, 0);
+      }
     }
-    #mic-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    #mic-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
 
     .mic-hint {
-      font-family: var(--ff-hand); font-size: 0.95rem; color: var(--muted);
-      text-align: center; max-width: 320px;
+      font-family: var(--ff-hand);
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 320px;
     }
 
     /* Success overlay after blow */
     #success-overlay {
-      position: fixed; inset: 0; z-index: 9997;
+      position: fixed;
+      inset: 0;
+      z-index: 9997;
       background: var(--white);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 0.8rem; text-align: center;
-      opacity: 0; pointer-events: none; transition: opacity 1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
     }
-    #success-overlay.visible { opacity: 1; pointer-events: all; }
+
+    #success-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
     #success-overlay h2 {
       font-family: var(--ff-fun);
       font-size: clamp(1.8rem, 5vw, 3rem);
       color: var(--coral);
     }
-    #success-overlay p { font-family: var(--ff-hand); font-size: 1.2rem; color: var(--muted); }
+
+    #success-overlay p {
+      font-family: var(--ff-hand);
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
 
     /* Sarcasm bubble */
     #sarcasm-bubble {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: var(--dark); color: #fff;
-      font-family: var(--ff-hand); font-size: 1.15rem;
-      padding: 0.75rem 1.8rem; border-radius: 50px;
-      white-space: nowrap; z-index: 600;
-      opacity: 0; pointer-events: none;
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: #fff;
+      font-family: var(--ff-hand);
+      font-size: 1.15rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 50px;
+      white-space: nowrap;
+      z-index: 600;
+      opacity: 0;
+      pointer-events: none;
       transition: opacity 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      max-width: 90vw; text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      max-width: 90vw;
+      text-align: center;
     }
-    #sarcasm-bubble.show { opacity: 1; }
+
+    #sarcasm-bubble.show {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -242,11 +429,14 @@
   <!-- Floating star decorations -->
   <span class="star-deco" style="top:8%; left:6%; font-size:1.5rem; color:var(--pink); animation-delay:0s;">★</span>
   <span class="star-deco" style="top:15%; right:8%; font-size:1rem; color:var(--mint); animation-delay:0.5s;">✦</span>
-  <span class="star-deco" style="top:70%; left:5%; font-size:1.3rem; color:var(--lavender); animation-delay:1s;">✶</span>
-  <span class="star-deco" style="top:80%; right:6%; font-size:0.9rem; color:var(--yellow); animation-delay:1.5s;">★</span>
+  <span class="star-deco"
+    style="top:70%; left:5%; font-size:1.3rem; color:var(--lavender); animation-delay:1s;">✶</span>
+  <span class="star-deco"
+    style="top:80%; right:6%; font-size:0.9rem; color:var(--yellow); animation-delay:1.5s;">★</span>
   <span class="star-deco" style="top:40%; left:3%; font-size:0.8rem; color:var(--peach); animation-delay:0.8s;">✦</span>
   <span class="star-deco" style="top:55%; right:4%; font-size:1.2rem; color:var(--sky); animation-delay:0.3s;">✶</span>
-  <span class="star-deco" style="top:25%; left:15%; font-size:0.7rem; color:var(--coral); animation-delay:1.2s;">★</span>
+  <span class="star-deco"
+    style="top:25%; left:15%; font-size:0.7rem; color:var(--coral); animation-delay:1.2s;">★</span>
   <span class="star-deco" style="top:88%; left:40%; font-size:1rem; color:var(--mint); animation-delay:0.6s;">✦</span>
 
   <!-- Sarcasm bubble (shared) -->
@@ -265,11 +455,12 @@
     <!-- SVG Mascot Ribbon (no emojis) -->
     <div class="mascot">
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="36" fill="#ffd6e8"/>
-        <path d="M30 40 C30 25, 50 35, 50 48 C50 35, 70 25, 70 40 C70 55, 50 65, 50 65 C50 65, 30 55, 30 40 Z" fill="#ff8fb8"/>
-        <ellipse cx="50" cy="48" rx="8" ry="8" fill="#ffb3d4"/>
-        <path d="M43 55 L32 78 L46 72 L50 62" fill="#ff8fb8"/>
-        <path d="M57 55 L68 78 L54 72 L50 62" fill="#ff8fb8"/>
+        <circle cx="50" cy="50" r="36" fill="#ffd6e8" />
+        <path d="M30 40 C30 25, 50 35, 50 48 C50 35, 70 25, 70 40 C70 55, 50 65, 50 65 C50 65, 30 55, 30 40 Z"
+          fill="#ff8fb8" />
+        <ellipse cx="50" cy="48" rx="8" ry="8" fill="#ffb3d4" />
+        <path d="M43 55 L32 78 L46 72 L50 62" fill="#ff8fb8" />
+        <path d="M57 55 L68 78 L54 72 L50 62" fill="#ff8fb8" />
       </svg>
     </div>
 
@@ -282,10 +473,11 @@
       <button class="bubble-btn" id="yes-btn" onclick="handleYes()">
         YES
       </button>
-      <button class="bubble-btn" id="no-btn">
-        no thanks
-      </button>
     </div>
+
+    <button class="bubble-btn" id="no-btn" style="left:%; top:55%;">
+      no thanks
+    </button>
 
     <!-- No-click counter -->
     <div id="no-counter">you've tried to escape <span id="no-count">0</span> times</div>
@@ -363,8 +555,8 @@
     <div class="mic-section">
       <button id="mic-btn" onclick="startListening()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2z"/>
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2z" />
         </svg>
         <span id="mic-btn-text">tap & blow</span>
       </button>
@@ -378,4 +570,5 @@
 
   <script src="main.js"></script>
 </body>
+
 </html>
