@@ -109,43 +109,40 @@ if (wrap) {
     wrap.scrollLeft = scrollStartL - (x - dragStartX);
   });
 
-  // Touch Support
-  let touchStartX = 0, touchScrollL = 0;
-  wrap.addEventListener('touchstart', (e) => {
-    touchStartX  = e.touches[0].pageX;
-    touchScrollL = wrap.scrollLeft;
-  }, { passive: true });
-
-  wrap.addEventListener('touchmove', (e) => {
-    const dx = touchStartX - e.touches[0].pageX;
-    wrap.scrollLeft = touchScrollL + dx;
-  }, { passive: true });
 }
 
 /* ── Scroll Stops & Progress Mapping ─────────────────────── */
 const STOPS = [
-  { id: 'stop-1',     pct: 0.12, chapter: 1 }, // Chapter 1: Yellow Egg
-  { id: 'stop-2',     pct: 0.26, chapter: 2 }, // Chapter 2: Gol Gappay Video
-  { id: 'stop-3',     pct: 0.42, chapter: 3 }, // Chapter 3: Harry Potter
-  { id: 'stop-4',     pct: 0.58, chapter: 4 }, // Chapter 4: Genshin Impact
-  { id: 'stop-5',     pct: 0.74, chapter: 5 }, // Chapter 5: Spider-Man Carousel
-  { id: 'stop-final', pct: 0.88, chapter: 6 }  // Chapter 6: Final Stop
+  { id: 'stop-1',     x: 720,  chapter: 1 }, // Chapter 1: Yellow Egg
+  { id: 'stop-2',     x: 1380, chapter: 2 }, // Chapter 2: Gol Gappay Video
+  { id: 'stop-3',     x: 2020, chapter: 3 }, // Chapter 3: Harry Potter
+  { id: 'stop-4',     x: 2680, chapter: 4 }, // Chapter 4: Genshin Impact
+  { id: 'stop-5',     x: 3360, chapter: 5 }, // Chapter 5: Spider-Man Carousel
+  { id: 'stop-final', x: 4050, chapter: 6 }  // Chapter 6: Final Stop
 ];
 
 const revealed = new Set();
+let scrollRafId = null;
 
 if (wrap) {
-  wrap.addEventListener('scroll', onScroll);
+  wrap.addEventListener('scroll', () => {
+    if (!scrollRafId) {
+      scrollRafId = requestAnimationFrame(() => {
+        onScroll();
+        scrollRafId = null;
+      });
+    }
+  }, { passive: true });
 }
 
 function onScroll() {
-  const maxScroll = wrap.scrollWidth - wrap.clientWidth;
-  if (maxScroll <= 0) return;
+  if (!wrap) return;
 
-  const pct = Math.min(Math.max(wrap.scrollLeft / maxScroll, 0), 1);
+  const scrollL = wrap.scrollLeft;
+  const clientW = wrap.clientWidth;
 
   // On mobile view, collapse open player when user scrolls through the journey
-  if (window.innerWidth <= 768 && wrap.scrollLeft > 20) {
+  if (window.innerWidth <= 768 && scrollL > 20) {
     const player = document.getElementById('vinyl-player');
     if (player && !player.classList.contains('collapsed')) {
       player.classList.add('collapsed');
@@ -154,18 +151,29 @@ function onScroll() {
     }
   }
 
-  placeBee(pct);
+  // Active focus point along the journey:
+  // On mobile, the bee stays right in the visible area (60% across the viewport)
+  // On desktop, 50% across the viewport
+  const focusRatio = window.innerWidth <= 768 ? 0.60 : 0.50;
+  const currentWorldX = scrollL + (clientW * focusRatio);
+
+  // Trail path starts at x = 80, ends at x = 3980
+  const trailStartX = 100;
+  const trailEndX   = 3980;
+  const beePct = Math.min(Math.max((currentWorldX - trailStartX) / (trailEndX - trailStartX), 0), 1);
+
+  placeBee(beePct);
 
   if (pathLength > 0 && progressPath) {
-    progressPath.style.strokeDashoffset = pathLength * (1 - pct);
+    progressPath.style.strokeDashoffset = pathLength * (1 - beePct);
   }
 
-  // Trigger reveals
+  // Trigger reveals when stop enters visible screen
   STOPS.forEach(stop => {
-    if (pct >= stop.pct && !revealed.has(stop.id)) {
+    const enterViewportX = scrollL + clientW;
+    if (enterViewportX >= stop.x + 40 && !revealed.has(stop.id)) {
       revealed.add(stop.id);
       revealElement(stop.id);
-      updateChapterDot(stop.chapter);
 
       // Chapter 1: Auto-trigger horizontal egg crack so picture flows out
       if (stop.id === 'stop-1') {
@@ -177,12 +185,25 @@ function onScroll() {
     }
   });
 
-  if (wrap.scrollLeft > 60 && scrollHint) {
-    scrollHint.classList.add('gone');
+  // Update chapter dots based on closest stop to center of screen
+  const centerWorldX = scrollL + (clientW * 0.5);
+  if (scrollL < 220) {
+    updateChapterDot(0);
+  } else {
+    let closestStop = STOPS[0];
+    let minDiff = Math.abs(centerWorldX - STOPS[0].x);
+    for (let i = 1; i < STOPS.length; i++) {
+      const diff = Math.abs(centerWorldX - STOPS[i].x);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestStop = STOPS[i];
+      }
+    }
+    updateChapterDot(closestStop.chapter);
   }
 
-  if (pct < 0.06) {
-    updateChapterDot(0);
+  if (scrollL > 60 && scrollHint) {
+    scrollHint.classList.add('gone');
   }
 }
 
@@ -194,17 +215,14 @@ function placeBee(pct) {
   const dist    = safePct * pathLength;
   const pt      = trail.getPointAtLength(dist);
 
-  const svgEl    = document.getElementById('trail-svg');
-  if (!svgEl || !wrap) return;
+  const innerEl = document.getElementById('journey-inner');
+  const svgEl   = document.getElementById('trail-svg');
+  if (!innerEl || !svgEl) return;
 
-  const svgRect  = svgEl.getBoundingClientRect();
-  const wrapRect = wrap.getBoundingClientRect();
+  const svgTop = (innerEl.clientHeight - svgEl.clientHeight) / 2;
 
-  const svgOffsetLeft = wrap.scrollLeft + svgRect.left - wrapRect.left;
-  const svgOffsetTop  = wrap.scrollTop  + svgRect.top  - wrapRect.top;
-
-  const beeX = svgOffsetLeft + pt.x;
-  const beeY = svgOffsetTop  + pt.y;
+  const beeX = pt.x;
+  const beeY = svgTop + pt.y;
 
   bee.style.left = beeX + 'px';
   bee.style.top  = beeY + 'px';
@@ -246,7 +264,16 @@ function openChapterVideo() {
   if (videoModal) {
     videoModal.classList.add('open');
     if (videoPlayer) {
-      videoPlayer.play().catch(() => {});
+      if (!videoPlayer.src || !videoPlayer.src.includes('vid.mp4')) {
+        videoPlayer.src = 'assets/images/vid.mp4';
+      }
+      videoPlayer.currentTime = 0;
+      const playPromise = videoPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Video auto-playback deferred or prevented:', err);
+        });
+      }
     }
   }
 }
@@ -313,26 +340,30 @@ function closeLetter() {
 window.openLetter = openLetter;
 window.closeLetter = closeLetter;
 
-/* ── October 23rd Countdown ──────────────────────────────── */
+/* ── October 23rd Wedding Timer (Since 1:25 PM) ──────────── */
 function updateFinalCountdown() {
   const el = document.getElementById('final-countdown');
   if (!el) return;
 
-  const target = new Date('2026-10-23T00:00:00');
-  const now    = new Date();
-  const diff   = target - now;
+  const weddingTime = new Date('2026-10-23T13:25:00');
+  const now = new Date();
+  const diff = now - weddingTime;
 
-  if (diff <= 0) {
-    el.textContent = 'today is the day!';
-    return;
+  if (diff >= 0) {
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    const dayStr = d > 0 ? `${d}d ` : '';
+    el.textContent = `married for ${dayStr}${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s 💕`;
+  } else {
+    const remaining = Math.abs(diff);
+    const h = Math.floor((remaining % 86400000) / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    el.textContent = `${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s until 1:25 PM`;
   }
-
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-
-  el.textContent = `${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s to go`;
 }
 setInterval(updateFinalCountdown, 1000);
 updateFinalCountdown();

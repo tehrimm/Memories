@@ -112,15 +112,14 @@
   </div>
 
   <!-- ════════ VIDEO MODAL (Pauses background music when opened) ════════ -->
-  <div id="video-modal">
+  <div id="video-modal" onclick="if(event.target === this) closeChapterVideo()">
     <div class="video-modal-card">
       <h3 style="font-family:'Pacifico',cursive;font-size:1.4rem;color:#2d2728;margin-bottom:0.5rem;">gol gappay session
       </h3>
       <div style="position:relative;background:#000;border-radius:8px;overflow:hidden;">
-        <!-- Embedded player placeholder or video clip -->
-        <video id="chapter-video-player" controls style="width:100%;height:280px;display:block;"
-          poster="assets/images/video_placeholder.png">
-          <source src="" type="video/mp4">
+        <!-- Embedded video clip -->
+        <video id="chapter-video-player" src="assets/images/vid.mp4" controls playsinline preload="auto" style="width:100%;height:280px;display:block;">
+          <source src="assets/images/vid.mp4" type="video/mp4">
           your browser does not support HTML video.
         </video>
       </div>
@@ -267,7 +266,7 @@
             </svg>
           </div>
           <div class="video-frame" onclick="openChapterVideo()">
-            <img src="assets/images/vid.mp4" alt="video placeholder" />
+            <video src="assets/images/vid.mp4#t=0.1" muted playsinline preload="metadata"></video>
             <div class="video-play-overlay">
               <div class="play-triangle">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
@@ -349,7 +348,7 @@
 
           <div class="carousel-viewport">
             <div class="carousel-slides" id="carousel-track">
-              <img src="assets/images/1.png" alt="Spiderman 1" />
+              <img src="assets/images/1.png" alt="Spiderman 1" style="object-position: center 8%;" />
               <img src="assets/images/2.png" alt="Spiderman 2" />
               <img src="assets/images/3.png" alt="Spiderman 3" />
               <img src="assets/images/4.png" alt="Spiderman 4" />

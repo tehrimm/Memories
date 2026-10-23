@@ -55,28 +55,32 @@ const noTaunts = [
   "okay at this point it's personal ({n} attempts)"
 ];
 
-/* ── Countdown ───────────────────────────────────────────── */
+/* ── Wedding Timer (Count up since today at 1:25 PM) ──────── */
 function updateCountdown() {
-  const target = new Date('2026-10-23T00:00:00');
-  const now    = new Date();
-  const diff   = target - now;
+  const weddingTime = new Date('2026-10-23T13:25:00');
+  const now = new Date();
+  const diff = now - weddingTime;
 
-  if (diff <= 0) {
-    ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '00';
-    });
-    return;
-  }
+  const labelEl = document.getElementById('cd-label');
   const daysEl = document.getElementById('cd-days');
   const hoursEl = document.getElementById('cd-hours');
   const minsEl = document.getElementById('cd-mins');
   const secsEl = document.getElementById('cd-secs');
 
-  if (daysEl) daysEl.textContent  = String(Math.floor(diff / 86400000)).padStart(2,'0');
-  if (hoursEl) hoursEl.textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
-  if (minsEl) minsEl.textContent  = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
-  if (secsEl) secsEl.textContent  = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+  const elapsed = Math.max(0, diff);
+  if (labelEl) {
+    labelEl.textContent = diff >= 0 ? 'married for' : 'until 1:25 pm';
+  }
+
+  const d = Math.floor(elapsed / 86400000);
+  const h = Math.floor((elapsed % 86400000) / 3600000);
+  const m = Math.floor((elapsed % 3600000) / 60000);
+  const s = Math.floor((elapsed % 60000) / 1000);
+
+  if (daysEl) daysEl.textContent = String(d).padStart(2, '0');
+  if (hoursEl) hoursEl.textContent = String(h).padStart(2, '0');
+  if (minsEl) minsEl.textContent = String(m).padStart(2, '0');
+  if (secsEl) secsEl.textContent = String(s).padStart(2, '0');
 }
 setInterval(updateCountdown, 1000);
 updateCountdown();
