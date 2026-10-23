@@ -446,6 +446,40 @@ body {
   opacity: 1;
 }
 
+/* Playful tap hint & gentle wobble while egg is intact */
+@keyframes eggWobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-2.5deg) scale(1.01); }
+  75% { transform: rotate(2.5deg) scale(1.01); }
+}
+.horizontal-egg-stage:not(.cracked) {
+  animation: eggWobble 2.6s ease-in-out infinite;
+}
+.horizontal-egg-stage:hover {
+  transform: scale(1.03);
+}
+
+.egg-tap-hint {
+  position: absolute;
+  bottom: 0px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #ffd040;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: var(--ff-hand);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #5a4010;
+  box-shadow: 0 4px 12px rgba(220,160,20,0.25);
+  z-index: 12;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+.horizontal-egg-stage.cracked .egg-tap-hint {
+  opacity: 0;
+  transform: translateY(12px) scale(0.8);
+}
+
 /* ══════════════════════════════════════════════════════════
    CHAPTER 2: GOL GAPPAY VIDEO CHAPTER
    ══════════════════════════════════════════════════════════ */

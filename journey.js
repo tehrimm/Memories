@@ -25,6 +25,7 @@ const videoOverlay = document.getElementById('video-center-overlay');
 
 let pathLength = 4074; // Pre-calculated accurate path length, refined dynamically
 let wasSongPlayingBeforeVideo = false;
+let eggAutoCracked = false;
 
 /* ── Scroll Stops & Progress Mapping (Declared first!) ─────── */
 const STOPS = [
@@ -110,16 +111,22 @@ function onScroll() {
     if (enterViewportX >= (stop.x - 120) && !revealed.has(stop.id)) {
       revealed.add(stop.id);
       revealElement(stop.id);
-
-      // Chapter 1: Auto-trigger horizontal egg crack so picture flows out
-      if (stop.id === 'stop-1') {
-        setTimeout(() => {
-          const egg = document.getElementById('egg-card');
-          if (egg) egg.classList.add('cracked');
-        }, 350);
-      }
     }
   });
+
+  // Chapter 1: Auto-trigger horizontal egg crack only when user scrolls Chapter 1 into center view
+  if (!eggAutoCracked && scrollL > 60) {
+    const centerWorldX = scrollL + (clientW * 0.5);
+    if (Math.abs(centerWorldX - 720) < 260) {
+      eggAutoCracked = true;
+      setTimeout(() => {
+        const egg = document.getElementById('egg-card');
+        if (egg && !egg.classList.contains('cracked')) {
+          egg.classList.add('cracked');
+        }
+      }, 300);
+    }
+  }
 
   // Update chapter dots based on closest stop to center of screen
   const centerWorldX = scrollL + (clientW * 0.5);
