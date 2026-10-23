@@ -26,113 +26,7 @@ const videoOverlay = document.getElementById('video-center-overlay');
 let pathLength = 4074; // Pre-calculated accurate path length, refined dynamically
 let wasSongPlayingBeforeVideo = false;
 
-/* ── Immediate Trail & Bee Initialization (Never wait for heavy media!) ── */
-function initTrail() {
-  if (trail) {
-    try {
-      const len = trail.getTotalLength();
-      if (len > 0) pathLength = len;
-    } catch (e) {}
-    if (progressPath) {
-      progressPath.style.strokeDasharray  = pathLength;
-      progressPath.style.strokeDashoffset = pathLength;
-    }
-    // Update bee position and trail progress immediately
-    onScroll();
-  }
-}
-
-function dismissVeil() {
-  const veil = document.getElementById('page-veil');
-  if (veil) {
-    veil.style.opacity = '0';
-    setTimeout(() => { veil.style.pointerEvents = 'none'; }, 800);
-  }
-  // Check file protocol warning
-  if (window.location.protocol === 'file:') {
-    const warn = document.getElementById('protocol-warn');
-    if (warn) warn.style.display = 'block';
-  }
-}
-
-// Run immediately as script is at bottom of body!
-initTrail();
-dismissVeil();
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initTrail();
-    dismissVeil();
-  });
-}
-window.addEventListener('load', () => {
-  initTrail();
-  dismissVeil();
-});
-
-/* ── Start Journey ────────────────────────────────────────── */
-function startJourney() {
-  const prompt = document.getElementById('music-prompt');
-  if (prompt) prompt.classList.add('hidden');
-
-  revealElement('title-0');
-
-  // Start music on user interaction
-  if (typeof togglePlay === 'function' && typeof isAudioPlaying !== 'undefined' && !isAudioPlaying) {
-    togglePlay();
-  }
-
-  // On mobile screens, auto-collapse the player so the bee trail and story are fully clear
-  const player = document.getElementById('vinyl-player');
-  if (player && window.innerWidth <= 768) {
-    player.classList.add('collapsed');
-    const toggleBtn = document.getElementById('player-toggle');
-    if (toggleBtn) toggleBtn.textContent = '▲';
-  }
-}
-window.startJourney = startJourney;
-
-/* ── Horizontal Scroll via Wheel ─────────────────────────── */
-if (wrap) {
-  wrap.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    wrap.scrollLeft += e.deltaY + e.deltaX;
-  }, { passive: false });
-}
-
-/* ── Drag to Scroll ──────────────────────────────────────── */
-let isDragging = false, dragStartX = 0, scrollStartL = 0;
-
-if (wrap) {
-  wrap.addEventListener('mousedown', (e) => {
-    isDragging   = true;
-    dragStartX   = e.pageX - wrap.offsetLeft;
-    scrollStartL = wrap.scrollLeft;
-    wrap.style.cursor = 'grabbing';
-  });
-
-  wrap.addEventListener('mouseleave', () => {
-    isDragging = false;
-    wrap.style.cursor = 'grab';
-  });
-
-  wrap.addEventListener('mouseup', () => {
-    isDragging = false;
-    wrap.style.cursor = 'grab';
-  });
-
-  wrap.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - wrap.offsetLeft;
-    wrap.scrollLeft = scrollStartL - (x - dragStartX);
-  });
-
-  // Touch Support — let CSS/browser handle native horizontal scroll
-  // We don't attach touchmove manually to avoid fighting native scroll
-}
-
-/* ── Scroll Stops & Progress Mapping ─────────────────────── */
+/* ── Scroll Stops & Progress Mapping (Declared first!) ─────── */
 const STOPS = [
   { id: 'stop-1',     x: 720,  chapter: 1 },
   { id: 'stop-2',     x: 1380, chapter: 2 },
@@ -144,27 +38,38 @@ const STOPS = [
 
 const revealed = new Set();
 
-// ——— Main bee / trail update loop: runs every animation frame ———
-// Using rAF polling instead of scroll events because iOS Safari
-// does not fire scroll events during momentum scrolling.
-let lastScrollLeft = -1;
-function rafLoop() {
-  if (wrap) {
-    const currentScroll = wrap.scrollLeft;
-    if (currentScroll !== lastScrollLeft) {
-      lastScrollLeft = currentScroll;
-      onScroll();
-    }
-  }
-  requestAnimationFrame(rafLoop);
-}
-requestAnimationFrame(rafLoop);
-
-// Also keep scroll event for instant response on desktop
-if (wrap) {
-  wrap.addEventListener('scroll', onScroll, { passive: true });
+/* ── Reveal Elements ─────────────────────────────────────── */
+function revealElement(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('revealed');
 }
 
+/* ── Chapter Dot Indicators ──────────────────────────────── */
+function updateChapterDot(idx) {
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === idx);
+  });
+}
+
+/* ── Move Bee along SVG Path ─────────────────────────────── */
+function placeBee(pct) {
+  if (!pathLength || !trail || !bee || !wrap) return;
+
+  const safePct = Math.max(0, Math.min(1, pct));
+  const dist    = safePct * pathLength;
+  const pt      = trail.getPointAtLength(dist);
+
+  const innerEl = document.getElementById('journey-inner');
+  const h = (innerEl && innerEl.clientHeight) ? innerEl.clientHeight : (wrap.clientHeight || window.innerHeight);
+  // #trail-svg has height: 340px centered at 50%
+  const svgTop = (h - 340) / 2;
+
+  bee.style.left = pt.x + 'px';
+  bee.style.top  = (svgTop + pt.y) + 'px';
+}
+
+/* ── Core Scroll Handler ─────────────────────────────────── */
 function onScroll() {
   if (!wrap) return;
 
@@ -182,9 +87,9 @@ function onScroll() {
   }
 
   // Active focus point along the journey:
-  // On mobile, the bee stays right in the visible area (60% across the viewport)
+  // On mobile, the bee stays right in the visible area (55% across the viewport)
   // On desktop, 50% across the viewport
-  const focusRatio = window.innerWidth <= 768 ? 0.60 : 0.50;
+  const focusRatio = window.innerWidth <= 768 ? 0.55 : 0.50;
   const currentWorldX = scrollL + (clientW * focusRatio);
 
   // Trail path starts at x = 80, ends at x = 3980
@@ -201,7 +106,8 @@ function onScroll() {
   // Trigger reveals when stop enters visible screen
   STOPS.forEach(stop => {
     const enterViewportX = scrollL + clientW;
-    if (enterViewportX >= stop.x + 40 && !revealed.has(stop.id)) {
+    // Reveal card as soon as it's within 120px of entering screen
+    if (enterViewportX >= (stop.x - 120) && !revealed.has(stop.id)) {
       revealed.add(stop.id);
       revealElement(stop.id);
 
@@ -210,7 +116,7 @@ function onScroll() {
         setTimeout(() => {
           const egg = document.getElementById('egg-card');
           if (egg) egg.classList.add('cracked');
-        }, 400);
+        }, 350);
       }
     }
   });
@@ -237,36 +143,130 @@ function onScroll() {
   }
 }
 
-/* ── Move Bee along SVG Path ─────────────────────────────── */
-function placeBee(pct) {
-  if (!pathLength || !trail || !bee || !wrap) return;
-
-  const safePct = Math.max(0, Math.min(1, pct));
-  const dist    = safePct * pathLength;
-  const pt      = trail.getPointAtLength(dist);
-
-  // Use getBoundingClientRect relative to the scroll container
-  // This correctly handles mobile, desktop, and any viewport size
-  const svgEl   = document.getElementById('trail-svg');
-  if (!svgEl) return;
-
-  const svgRect  = svgEl.getBoundingClientRect();
-  const wrapRect = wrap.getBoundingClientRect();
-
-  // Translate SVG-local coordinates into journey-inner absolute coordinates
-  const beeX = wrap.scrollLeft + (svgRect.left - wrapRect.left) + pt.x;
-  const beeY = wrap.scrollTop  + (svgRect.top  - wrapRect.top)  + pt.y;
-
-  bee.style.left = beeX + 'px';
-  bee.style.top  = beeY + 'px';
+/* ── Immediate Trail & Bee Initialization ────────────────── */
+function initTrail() {
+  if (trail) {
+    try {
+      const len = trail.getTotalLength();
+      if (len > 0) pathLength = len;
+    } catch (e) {}
+    if (progressPath) {
+      progressPath.style.strokeDasharray  = pathLength;
+      progressPath.style.strokeDashoffset = pathLength;
+    }
+    // Update bee position and trail progress immediately
+    onScroll();
+  }
+  // Reveal title-0 opener immediately
+  revealElement('title-0');
 }
 
-/* ── Reveal Elements ─────────────────────────────────────── */
-function revealElement(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  setTimeout(() => el.classList.add('revealed'), 50);
+function dismissVeil() {
+  const veil = document.getElementById('page-veil');
+  if (veil) {
+    veil.style.opacity = '0';
+    setTimeout(() => { veil.style.pointerEvents = 'none'; }, 800);
+  }
+  // Check file protocol warning
+  if (window.location.protocol === 'file:') {
+    const warn = document.getElementById('protocol-warn');
+    if (warn) warn.style.display = 'block';
+  }
 }
+
+// Run immediately!
+initTrail();
+dismissVeil();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initTrail();
+    dismissVeil();
+  });
+}
+window.addEventListener('load', () => {
+  initTrail();
+  dismissVeil();
+});
+
+/* ── Start Journey ────────────────────────────────────────── */
+function startJourney() {
+  const prompt = document.getElementById('music-prompt');
+  if (prompt) prompt.classList.add('hidden');
+
+  revealElement('title-0');
+  onScroll();
+
+  // Start music on user interaction
+  if (typeof togglePlay === 'function' && typeof isAudioPlaying !== 'undefined' && !isAudioPlaying) {
+    togglePlay();
+  }
+
+  // On mobile screens, auto-collapse the player so the bee trail and story are fully clear
+  const player = document.getElementById('vinyl-player');
+  if (player && window.innerWidth <= 768) {
+    player.classList.add('collapsed');
+    const toggleBtn = document.getElementById('player-toggle');
+    if (toggleBtn) toggleBtn.textContent = '▲';
+  }
+}
+window.startJourney = startJourney;
+
+/* ── Horizontal Scroll via Wheel ─────────────────────────── */
+if (wrap) {
+  wrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    wrap.scrollLeft += e.deltaY + e.deltaX;
+  }, { passive: false });
+}
+
+/* ── Drag to Scroll (Desktop) ────────────────────────────── */
+let isDragging = false, dragStartX = 0, scrollStartL = 0;
+
+if (wrap) {
+  wrap.addEventListener('mousedown', (e) => {
+    isDragging   = true;
+    dragStartX   = e.pageX - wrap.offsetLeft;
+    scrollStartL = wrap.scrollLeft;
+    wrap.style.cursor = 'grabbing';
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    isDragging = false;
+    wrap.style.cursor = 'grab';
+  });
+
+  wrap.addEventListener('mouseup', () => {
+    isDragging = false;
+    wrap.style.cursor = 'grab';
+  });
+
+  wrap.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - wrap.offsetLeft;
+    wrap.scrollLeft = scrollStartL - (x - dragStartX);
+  });
+}
+
+// ——— Continuous RAF Loop (Runs every frame to guarantee 60fps tracking) ———
+let lastScrollLeft = -1;
+function rafLoop() {
+  if (wrap) {
+    const currentScroll = wrap.scrollLeft;
+    if (currentScroll !== lastScrollLeft) {
+      lastScrollLeft = currentScroll;
+      onScroll();
+    }
+  }
+  requestAnimationFrame(rafLoop);
+}
+requestAnimationFrame(rafLoop);
+
+if (wrap) {
+  wrap.addEventListener('scroll', onScroll, { passive: true });
+}
+
 
 /* ── Chapter Dot Indicators ──────────────────────────────── */
 function updateChapterDot(idx) {
