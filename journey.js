@@ -21,6 +21,7 @@ const dots         = document.querySelectorAll('.ch-dot');
 const letterOverlay= document.getElementById('letter-overlay');
 const videoModal   = document.getElementById('video-modal');
 const videoPlayer  = document.getElementById('chapter-video-player');
+const videoOverlay = document.getElementById('video-center-overlay');
 
 let pathLength = 0;
 let wasSongPlayingBeforeVideo = false;
@@ -250,6 +251,49 @@ function toggleEggCrack() {
 window.toggleEggCrack = toggleEggCrack;
 
 /* ── Chapter 2: Video Modal & Audio Pause Mechanics ──────── */
+if (videoPlayer) {
+  videoPlayer.addEventListener('play', () => {
+    const overlay = document.getElementById('video-center-overlay');
+    if (overlay) overlay.classList.add('hidden');
+    // Ensure background music is paused
+    if (typeof isAudioPlaying !== 'undefined' && isAudioPlaying) {
+      wasSongPlayingBeforeVideo = true;
+      if (typeof togglePlay === 'function') togglePlay();
+    }
+  });
+
+  videoPlayer.addEventListener('pause', () => {
+    const overlay = document.getElementById('video-center-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+  });
+
+  videoPlayer.addEventListener('ended', () => {
+    const overlay = document.getElementById('video-center-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+    if (wasSongPlayingBeforeVideo && typeof isAudioPlaying !== 'undefined' && !isAudioPlaying) {
+      if (typeof togglePlay === 'function') togglePlay();
+    }
+  });
+}
+
+function toggleModalVideoPlay() {
+  if (!videoPlayer) return;
+  if (videoPlayer.paused) {
+    const p = videoPlayer.play();
+    if (p !== undefined) {
+      p.then(() => {
+        const overlay = document.getElementById('video-center-overlay');
+        if (overlay) overlay.classList.add('hidden');
+      }).catch(err => {
+        console.warn('Play failed:', err);
+      });
+    }
+  } else {
+    videoPlayer.pause();
+  }
+}
+window.toggleModalVideoPlay = toggleModalVideoPlay;
+
 function openChapterVideo() {
   // Pause background music when video plays so audio doesn't clash
   if (typeof isAudioPlaying !== 'undefined' && isAudioPlaying) {
@@ -267,11 +311,14 @@ function openChapterVideo() {
       if (!videoPlayer.src || !videoPlayer.src.includes('vid.mp4')) {
         videoPlayer.src = 'assets/images/vid.mp4';
       }
-      videoPlayer.currentTime = 0;
+      const overlay = document.getElementById('video-center-overlay');
       const playPromise = videoPlayer.play();
       if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.warn('Video auto-playback deferred or prevented:', err);
+        playPromise.then(() => {
+          if (overlay) overlay.classList.add('hidden');
+        }).catch((err) => {
+          console.warn('Browser requires explicit tap to play with sound:', err);
+          if (overlay) overlay.classList.remove('hidden');
         });
       }
     }
