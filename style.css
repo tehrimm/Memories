@@ -189,6 +189,7 @@ body {
   overflow-x: scroll; overflow-y: hidden;
   cursor: grab; user-select: none;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
   background: radial-gradient(circle at 10% 20%, #fff7fc 0%, #fffcf5 35%, #f6f8ff 70%, #fff2f8 100%);
 }
 #journey-wrap:active { cursor: grabbing; }

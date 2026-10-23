@@ -128,41 +128,41 @@ if (wrap) {
     wrap.scrollLeft = scrollStartL - (x - dragStartX);
   });
 
-  // Touch Support
-  let touchStartX = 0, touchScrollL = 0;
-  wrap.addEventListener('touchstart', (e) => {
-    touchStartX  = e.touches[0].pageX;
-    touchScrollL = wrap.scrollLeft;
-  }, { passive: true });
-
-  wrap.addEventListener('touchmove', (e) => {
-    const dx = touchStartX - e.touches[0].pageX;
-    wrap.scrollLeft = touchScrollL + dx;
-  }, { passive: true });
+  // Touch Support — let CSS/browser handle native horizontal scroll
+  // We don't attach touchmove manually to avoid fighting native scroll
 }
 
 /* ── Scroll Stops & Progress Mapping ─────────────────────── */
 const STOPS = [
-  { id: 'stop-1',     x: 720,  chapter: 1 }, // Chapter 1: Yellow Egg
-  { id: 'stop-2',     x: 1380, chapter: 2 }, // Chapter 2: Gol Gappay Video
-  { id: 'stop-3',     x: 2020, chapter: 3 }, // Chapter 3: Harry Potter
-  { id: 'stop-4',     x: 2680, chapter: 4 }, // Chapter 4: Genshin Impact
-  { id: 'stop-5',     x: 3360, chapter: 5 }, // Chapter 5: Spider-Man Carousel
-  { id: 'stop-final', x: 4050, chapter: 6 }  // Chapter 6: Final Stop
+  { id: 'stop-1',     x: 720,  chapter: 1 },
+  { id: 'stop-2',     x: 1380, chapter: 2 },
+  { id: 'stop-3',     x: 2020, chapter: 3 },
+  { id: 'stop-4',     x: 2680, chapter: 4 },
+  { id: 'stop-5',     x: 3360, chapter: 5 },
+  { id: 'stop-final', x: 4050, chapter: 6 }
 ];
 
 const revealed = new Set();
-let scrollRafId = null;
 
-if (wrap) {
-  wrap.addEventListener('scroll', () => {
-    if (!scrollRafId) {
-      scrollRafId = requestAnimationFrame(() => {
-        onScroll();
-        scrollRafId = null;
-      });
+// ——— Main bee / trail update loop: runs every animation frame ———
+// Using rAF polling instead of scroll events because iOS Safari
+// does not fire scroll events during momentum scrolling.
+let lastScrollLeft = -1;
+function rafLoop() {
+  if (wrap) {
+    const currentScroll = wrap.scrollLeft;
+    if (currentScroll !== lastScrollLeft) {
+      lastScrollLeft = currentScroll;
+      onScroll();
     }
-  }, { passive: true });
+  }
+  requestAnimationFrame(rafLoop);
+}
+requestAnimationFrame(rafLoop);
+
+// Also keep scroll event for instant response on desktop
+if (wrap) {
+  wrap.addEventListener('scroll', onScroll, { passive: true });
 }
 
 function onScroll() {
