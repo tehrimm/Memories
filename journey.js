@@ -128,6 +128,17 @@ if (wrap) {
     wrap.scrollLeft = scrollStartL - (x - dragStartX);
   });
 
+  // Touch Support
+  let touchStartX = 0, touchScrollL = 0;
+  wrap.addEventListener('touchstart', (e) => {
+    touchStartX  = e.touches[0].pageX;
+    touchScrollL = wrap.scrollLeft;
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    const dx = touchStartX - e.touches[0].pageX;
+    wrap.scrollLeft = touchScrollL + dx;
+  }, { passive: true });
 }
 
 /* ── Scroll Stops & Progress Mapping ─────────────────────── */
@@ -228,20 +239,23 @@ function onScroll() {
 
 /* ── Move Bee along SVG Path ─────────────────────────────── */
 function placeBee(pct) {
-  if (!pathLength || !trail || !bee) return;
+  if (!pathLength || !trail || !bee || !wrap) return;
 
   const safePct = Math.max(0, Math.min(1, pct));
   const dist    = safePct * pathLength;
   const pt      = trail.getPointAtLength(dist);
 
-  const innerEl = document.getElementById('journey-inner');
+  // Use getBoundingClientRect relative to the scroll container
+  // This correctly handles mobile, desktop, and any viewport size
   const svgEl   = document.getElementById('trail-svg');
-  if (!innerEl || !svgEl) return;
+  if (!svgEl) return;
 
-  const svgTop = (innerEl.clientHeight - svgEl.clientHeight) / 2;
+  const svgRect  = svgEl.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
 
-  const beeX = pt.x;
-  const beeY = svgTop + pt.y;
+  // Translate SVG-local coordinates into journey-inner absolute coordinates
+  const beeX = wrap.scrollLeft + (svgRect.left - wrapRect.left) + pt.x;
+  const beeY = wrap.scrollTop  + (svgRect.top  - wrapRect.top)  + pt.y;
 
   bee.style.left = beeX + 'px';
   bee.style.top  = beeY + 'px';
