@@ -1,70 +1,125 @@
-# Love Letter 💌
+# Memories 💌 — A Whimsical Journey for Asma
 
-> *A visual journey — written by fate, for Asma — on the eve of October 23rd, 2026.*
+> *A visual journey — written by fate, for Asma — on the eve of October 23rd, 2026.*  
+> **Live Website:** [https://tehrimm.github.io/Memories/](https://tehrimm.github.io/Memories/)
 
-A whimsical, vintage, interactive website gifted to Asma on her Nikkah. Features:
-
--  **Candle-blow landing** — blow out 3 candles using your mic (Web Audio API)
--  **Photo journey** — 6 chapters from baby to Nikkah day with Polaroid-style photos
--  **Vinyl record player** — BTS & AOT songs via Spotify IFrame API
--  **Live countdown** to October 23rd
--  **Rose petal animations** and vintage grain aesthetic
+A whimsical, pastel, interactive gift website dedicated to Asma on her Nikkah celebration. Built with vanilla HTML5, CSS3, and JavaScript, featuring playful interactive animations, custom audio, and nostalgic moments.
 
 ---
 
-## Running Locally
+## ✨ Features & Highlights
 
-Since the Spotify player requires an HTTP server (not `file://`), run a local server:
+- 🐝 **Interactive Bee Flight Trail**:
+  - An animated SVG bumblebee that glides smoothly along an organic flight path as you scroll horizontally.
+  - Supports mouse wheel, horizontal drag, touch gestures, and keyboard navigation.
+  - Dynamic progress bar tracking the journey across all chapter checkpoints.
 
+- 🕯️ **Interactive Candle Landing**:
+  - Playful opening gatekeeper with an evasive "No" button that tracks dodge attempts.
+  - Interactive mic-driven candle blowing using the **Web Audio API** (or fallback click-to-extinguish).
+  - Floating stars, cute mascot, and live countdown timer to the big day.
+
+- 🎵 **Vinyl Record Turntable & Audio Player**:
+  - Custom turntable deck featuring a rotating vinyl disc and responsive tonearm.
+  - Collapsible floating mini-player pill designed for clean viewing on both desktop and mobile.
+  - Audio playback persistence across pages using `sessionStorage`.
+  - Built-in offline-ready tracks:
+    1. **BTS** — *Friends* (`assets/audio/friends.mp3`)
+    2. **BTS** — *Spring Day* (`assets/audio/spring_day.mp3`)
+    3. **V (BTS)** — *Sweet Night* (`assets/audio/sweet_night.mp3`)
+
+- 📖 **Themed Story Chapters**:
+  - **Chapter 1 (The Beginning)**: Interactive seamless yellow egg that cracks open horizontally on click to reveal baby Asma.
+  - **Chapter 2 (Gol Gappay)**: Video player modal that automatically pauses the background playlist during video playback and resumes on close.
+  - **Chapter 3 (Harry Potter)**: Hogwarts theme with animated Golden Snitch and lightning bolt badge.
+  - **Chapter 4 (Genshin Impact)**: Co-op gaming memories with a glowing Primogem accent.
+  - **Chapter 5 (Together)**: Interactive Spider-Man themed 5-photo carousel with web accents and slide indicators.
+  - **Chapter 6 (New Beginning)**: October 23rd countdown, wedding rings badge, and a heartfelt letter overlay (with music playing uninterrupted).
+
+- 🌸 **Whimsical Pastel Aesthetic**:
+  - Floating ambient glowing orbs, drifting SVG clouds, twinkling stars, and Polaroid-style photo frames with washi tape accents.
+  - Modern handwritten & display typography via Google Fonts (*Caveat*, *Pacifico*, *Nunito*).
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── index.html           # Landing page (yes/no gatekeeper & candle blowing)
+├── journey.html         # Main horizontal journey experience & story chapters
+├── main.js              # Logic for candles, mic detection, and gatekeeper
+├── journey.js           # Horizontal scrolling, bee trail, chapter reveals & modals
+├── player.js            # Turntable audio player & playlist manager
+├── style.css            # Global pastel theme, animations, polaroids, and layout
+├── assets/
+│   ├── audio/           # Local audio tracks (.mp3 and .m4a)
+│   │   ├── friends.mp3
+│   │   ├── spring_day.mp3
+│   │   └── sweet_night.mp3
+│   └── images/          # Chapter polaroid images, placeholders, and video clip
+│       ├── 1.png - 5.png
+│       ├── egg_placeholder.png
+│       ├── genshin.png
+│       ├── harry.jpg
+│       ├── sikhandar_placeholder.png
+│       └── vid.mp4
+└── README.md
+```
+
+---
+
+## 🚀 Running Locally
+
+Because modern web browsers restrict audio playback and certain assets over the `file://` protocol, run the project with a local HTTP server:
+
+### Option 1: Node.js (Included)
 ```bash
-# Option 1: Python (if installed)
+npm install
+npm start
+```
+*Runs via `live-server` on `http://localhost:8080`.*
+
+### Option 2: Python
+```bash
+# Python 3
 python -m http.server 8080
-# Then visit http://localhost:8080
-
-# Option 2: Node.js live-server
-npx live-server
+# Open http://localhost:8080 in your browser
 ```
 
 ---
 
-##  Deploy to GitHub Pages (Free Hosting)
+## 🌐 Deploying & Updating GitHub Pages
 
-1. Create a new repo on GitHub (e.g. `love-letter`)
-2. In this folder, run:
+The live site is published at:
+**[https://tehrimm.github.io/Memories/](https://tehrimm.github.io/Memories/)**
+
+To push new updates to GitHub Pages:
 
 ```bash
-git init
+# 1. Stage and commit changes
 git add .
-git commit -m  initial commit — love letter"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/asma-love-letter.git
-git push -u origin main
+git commit -m "feat: update memories and story details"
+
+# 2. Push to main
+git push origin main
+
+# 3. Synchronize gh-pages branch (ensures GitHub Pages builds the latest version)
+git push origin main:gh-pages
 ```
 
-3. On GitHub → repo Settings → Pages → Source: `main` branch → `/root`
-4. Your site will be live at: `https://YOUR_USERNAME.github.io/asma-love-letter`
+---
+
+## 🎨 Customization
+
+- **Updating Songs**: In [player.js](player.js), edit the `PLAYLIST` array with your desired audio source and details:
+  ```javascript
+  const PLAYLIST = [
+    { title: "Song Name", artist: "Artist", src: "assets/audio/your_song.mp3" }
+  ];
+  ```
+- **Updating Photos**: Place new images in [assets/images/](assets/images/) and update the `src` references in [journey.html](journey.html).
+- **Personalizing the Letter**: Edit the text inside the `#letter-overlay .letter-body` in [journey.html](journey.html).
 
 ---
 
-## Updating Songs
-
-Open `player.js` and edit the `PLAYLIST` array. Each song needs:
-- `title` — displayed on the player
-- `artist` — displayed below the title
-- `videoId` — the YouTube video ID (the part after `?v=` in the URL)
-
----
-
-##  Adding Real Photos
-
-Replace the images in `assets/images/` with Asma's actual photos:
-- `photo_roses.png` → Chapter 1 (baby photo)
-- `photo_stars.png` → Chapter 1 (childhood)
-- `photo_book.png`  → Chapter 2 (memory 1)
-- `photo_letter.png`→ Chapter 2 (memory 2)
-- `photo_hands.png` → Chapter 2 (memory 3)
-- `photo_golden.png`→ Chapter 4 (new chapter)
-
----
-
-*made with 💕 by tehrim*
+*Made with 💕 by Tehrim*
