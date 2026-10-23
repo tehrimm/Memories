@@ -23,33 +23,51 @@ const videoModal   = document.getElementById('video-modal');
 const videoPlayer  = document.getElementById('chapter-video-player');
 const videoOverlay = document.getElementById('video-center-overlay');
 
-let pathLength = 0;
+let pathLength = 4074; // Pre-calculated accurate path length, refined dynamically
 let wasSongPlayingBeforeVideo = false;
 
-/* ── Page Entrance ────────────────────────────────────────── */
-window.addEventListener('load', () => {
+/* ── Immediate Trail & Bee Initialization (Never wait for heavy media!) ── */
+function initTrail() {
+  if (trail) {
+    try {
+      const len = trail.getTotalLength();
+      if (len > 0) pathLength = len;
+    } catch (e) {}
+    if (progressPath) {
+      progressPath.style.strokeDasharray  = pathLength;
+      progressPath.style.strokeDashoffset = pathLength;
+    }
+    // Update bee position and trail progress immediately
+    onScroll();
+  }
+}
+
+function dismissVeil() {
   const veil = document.getElementById('page-veil');
   if (veil) {
-    requestAnimationFrame(() => {
-      veil.style.opacity = '0';
-      setTimeout(() => { veil.style.pointerEvents = 'none'; }, 800);
-    });
+    veil.style.opacity = '0';
+    setTimeout(() => { veil.style.pointerEvents = 'none'; }, 800);
   }
-
   // Check file protocol warning
   if (window.location.protocol === 'file:') {
     const warn = document.getElementById('protocol-warn');
     if (warn) warn.style.display = 'block';
   }
+}
 
-  if (trail) {
-    pathLength = trail.getTotalLength();
-    if (progressPath) {
-      progressPath.style.strokeDasharray  = pathLength;
-      progressPath.style.strokeDashoffset = pathLength;
-    }
-    placeBee(0);
-  }
+// Run immediately as script is at bottom of body!
+initTrail();
+dismissVeil();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initTrail();
+    dismissVeil();
+  });
+}
+window.addEventListener('load', () => {
+  initTrail();
+  dismissVeil();
 });
 
 /* ── Start Journey ────────────────────────────────────────── */

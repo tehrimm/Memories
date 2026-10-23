@@ -248,6 +248,8 @@ body {
   stroke-width: 3.8;
   stroke-linecap: round;
   filter: drop-shadow(0 2px 10px rgba(179, 136, 255, 0.55));
+  stroke-dasharray: 4100;
+  stroke-dashoffset: 4100;
 }
 
 #bee {
